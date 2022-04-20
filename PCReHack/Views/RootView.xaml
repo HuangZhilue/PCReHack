@@ -1,0 +1,432 @@
+﻿<hc:Window
+    x:Class="PCReHack.Views.RootView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ViewHelper="clr-namespace:PCReHack.Helper.ViewHelper"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:viewModels="clr-namespace:PCReHack.ViewModels"
+    Title="{Binding Title}"
+    Width="800"
+    Height="450"
+    d:DataContext="{d:DesignInstance Type={x:Type viewModels:RootViewModel}}"
+    Left="{Binding Left, Mode=OneWayToSource}"
+    ShowTitle="True"
+    Top="{Binding Top, Mode=OneWayToSource}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="NextScreenTime" />
+                <hc:NumericUpDown
+                    MinWidth="70"
+                    Minimum="0"
+                    Value="{Binding NextScreenTime}" />
+                <hc:Divider Orientation="Vertical" />
+                <Label Content="ClickInterval" />
+                <hc:NumericUpDown
+                    MinWidth="70"
+                    Minimum="0"
+                    Value="{Binding ClickInterval}" />
+                <hc:Divider Orientation="Vertical" />
+                <Label Content="Threshold" />
+                <hc:NumericUpDown MinWidth="70" Value="{Binding Threshold}" />
+
+                <Button
+                    HorizontalAlignment="Right"
+                    Command="{s:Action Start}"
+                    Content="Start">
+                    <b:Interaction.Triggers>
+                        <b:DataTrigger
+                            Binding="{Binding IsStart}"
+                            Comparison="Equal"
+                            Value="True">
+                            <b:ChangePropertyAction PropertyName="Content" Value="Stop" />
+                        </b:DataTrigger>
+                        <b:DataTrigger
+                            Binding="{Binding IsStart}"
+                            Comparison="Equal"
+                            Value="False">
+                            <b:ChangePropertyAction PropertyName="Content" Value="Start" />
+                        </b:DataTrigger>
+                    </b:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Border
+                    BorderBrush="{DynamicResource SecondaryBorderBrush}"
+                    BorderThickness="1,1,1,1"
+                    DataContext="{Binding LeftRectViewModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="55" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                d:Text="左侧检测框"
+                                Style="{StaticResource TextBlockSubTitleBold}"
+                                Text="{Binding Title}" />
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                Command="{s:Action GetImage}"
+                                CommandParameter="{Binding Title}">
+                                <Path
+                                    Data="{StaticResource DownloadGeometry}"
+                                    Fill="Black"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Stretch="Uniform"
+                                    Stroke="Black">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleY="-1" />
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Button>
+                        </StackPanel>
+                        <ScrollViewer Grid.Row="1">
+                            <ListBox ItemsSource="{Binding TempImageList}" Style="{StaticResource StackPanelVerticalListBox}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel MaxHeight="100" Orientation="Horizontal">
+                                            <Image
+                                                MaxWidth="150"
+                                                d:Source="/Resources/G_L.png"
+                                                Source="{Binding Image}"
+                                                Stretch="None" />
+                                            <Button Command="{s:Action RemoveImageL}" CommandParameter="{Binding Name}">
+                                                <Path
+                                                    Data="{StaticResource CloseGeometry}"
+                                                    Fill="{StaticResource DangerBrush}"
+                                                    Stretch="Uniform"
+                                                    Stroke="{StaticResource DangerBrush}" />
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <d:StackPanel MaxHeight="100" Orientation="Horizontal">
+                                    <Image
+                                        MaxWidth="150"
+                                        d:Source="/Resources/HeadLeft.png"
+                                        Stretch="None" />
+                                    <Button>
+                                        <Path
+                                            Data="{StaticResource CloseGeometry}"
+                                            Fill="{StaticResource DangerBrush}"
+                                            Stretch="Uniform"
+                                            Stroke="{StaticResource DangerBrush}" />
+                                    </Button>
+                                </d:StackPanel>
+                            </ListBox>
+                        </ScrollViewer>
+                        <ScrollViewer Grid.Row="2">
+                            <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            d:Text="0.0000000"
+                                            FontSize="16"
+                                            Foreground="{StaticResource SuccessBrush}"
+                                            Text="{Binding Result}">
+                                            <b:Interaction.Triggers>
+                                                <b:DataTrigger
+                                                    Binding="{Binding IsFound}"
+                                                    Comparison="Equal"
+                                                    Value="True">
+                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                </b:DataTrigger>
+                                                <b:DataTrigger
+                                                    Binding="{Binding IsFound}"
+                                                    Comparison="Equal"
+                                                    Value="False">
+                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                </b:DataTrigger>
+                                            </b:Interaction.Triggers>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <d:TextBlock
+                                    d:Text="0.0000000"
+                                    FontSize="16"
+                                    Foreground="{StaticResource SuccessBrush}">
+                                    <b:Interaction.Triggers>
+                                        <b:DataTrigger
+                                            Binding="{Binding IsFound}"
+                                            Comparison="Equal"
+                                            Value="True">
+                                            <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                        </b:DataTrigger>
+                                        <b:DataTrigger
+                                            Binding="{Binding IsFound}"
+                                            Comparison="Equal"
+                                            Value="False">
+                                            <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                        </b:DataTrigger>
+                                    </b:Interaction.Triggers>
+                                </d:TextBlock>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Border
+                    BorderBrush="{DynamicResource SecondaryBorderBrush}"
+                    BorderThickness="1,1,1,1"
+                    DataContext="{Binding RightRectViewModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="55" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                d:Text="左侧检测框"
+                                Style="{StaticResource TextBlockSubTitleBold}"
+                                Text="{Binding Title}" />
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                Command="{s:Action GetImage}"
+                                CommandParameter="{Binding Title}">
+                                <Path
+                                    Data="{StaticResource DownloadGeometry}"
+                                    Fill="Black"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Stretch="Uniform"
+                                    Stroke="Black">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleY="-1" />
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Button>
+                        </StackPanel>
+                        <ScrollViewer Grid.Row="1">
+                            <ListBox ItemsSource="{Binding TempImageList}" Style="{StaticResource StackPanelVerticalListBox}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel MaxHeight="100" Orientation="Horizontal">
+                                            <Image
+                                                MaxWidth="150"
+                                                d:Source="/Resources/G_L.png"
+                                                Source="{Binding Image}"
+                                                Stretch="None" />
+                                            <Button Command="{s:Action RemoveImageR}" CommandParameter="{Binding Name}">
+                                                <Path
+                                                    Data="{StaticResource CloseGeometry}"
+                                                    Fill="{StaticResource DangerBrush}"
+                                                    Stretch="Uniform"
+                                                    Stroke="{StaticResource DangerBrush}" />
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <d:StackPanel MaxHeight="100" Orientation="Horizontal">
+                                    <Image
+                                        MaxWidth="150"
+                                        d:Source="/Resources/HeadLeft.png"
+                                        Stretch="None" />
+                                    <Button>
+                                        <Path
+                                            Data="{StaticResource CloseGeometry}"
+                                            Fill="{StaticResource DangerBrush}"
+                                            Stretch="Uniform"
+                                            Stroke="{StaticResource DangerBrush}" />
+                                    </Button>
+                                </d:StackPanel>
+                            </ListBox>
+                        </ScrollViewer>
+                        <ScrollViewer Grid.Row="2">
+                            <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            d:Text="0.0000000"
+                                            FontSize="16"
+                                            Foreground="{StaticResource SuccessBrush}"
+                                            Text="{Binding Result}">
+                                            <b:Interaction.Triggers>
+                                                <b:DataTrigger
+                                                    Binding="{Binding IsFound}"
+                                                    Comparison="Equal"
+                                                    Value="True">
+                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                </b:DataTrigger>
+                                                <b:DataTrigger
+                                                    Binding="{Binding IsFound}"
+                                                    Comparison="Equal"
+                                                    Value="False">
+                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                </b:DataTrigger>
+                                            </b:Interaction.Triggers>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <d:TextBlock
+                                    d:Text="0.0000000"
+                                    FontSize="16"
+                                    Foreground="{StaticResource SuccessBrush}">
+                                    <b:Interaction.Triggers>
+                                        <b:DataTrigger
+                                            Binding="{Binding IsFound}"
+                                            Comparison="Equal"
+                                            Value="True">
+                                            <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                        </b:DataTrigger>
+                                        <b:DataTrigger
+                                            Binding="{Binding IsFound}"
+                                            Comparison="Equal"
+                                            Value="False">
+                                            <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                        </b:DataTrigger>
+                                    </b:Interaction.Triggers>
+                                </d:TextBlock>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Column="2">
+                <Border
+                    BorderBrush="{DynamicResource SecondaryBorderBrush}"
+                    BorderThickness="1,1,1,1"
+                    DataContext="{Binding CenterRectViewModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="55" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                d:Text="左侧检测框"
+                                Style="{StaticResource TextBlockSubTitleBold}"
+                                Text="{Binding Title}" />
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                Command="{s:Action GetImage}"
+                                CommandParameter="{Binding Title}">
+                                <Path
+                                    Data="{StaticResource DownloadGeometry}"
+                                    Fill="Black"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Stretch="Uniform"
+                                    Stroke="Black">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleY="-1" />
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Button>
+                        </StackPanel>
+                        <ScrollViewer Grid.Row="1">
+                            <ListBox ItemsSource="{Binding TempImageList}" Style="{StaticResource StackPanelVerticalListBox}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel MaxHeight="100" Orientation="Horizontal">
+                                            <Image
+                                                MaxWidth="150"
+                                                d:Source="/Resources/G_L.png"
+                                                Source="{Binding Image}"
+                                                Stretch="None" />
+                                            <Button Command="{s:Action RemoveImageC}" CommandParameter="{Binding Name}">
+                                                <Path
+                                                    Data="{StaticResource CloseGeometry}"
+                                                    Fill="{StaticResource DangerBrush}"
+                                                    Stretch="Uniform"
+                                                    Stroke="{StaticResource DangerBrush}" />
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <d:StackPanel MaxHeight="100" Orientation="Horizontal">
+                                    <Image
+                                        MaxWidth="150"
+                                        d:Source="/Resources/HeadLeft.png"
+                                        Stretch="None" />
+                                    <Button>
+                                        <Path
+                                            Data="{StaticResource CloseGeometry}"
+                                            Fill="{StaticResource DangerBrush}"
+                                            Stretch="Uniform"
+                                            Stroke="{StaticResource DangerBrush}" />
+                                    </Button>
+                                </d:StackPanel>
+                            </ListBox>
+                        </ScrollViewer>
+                        <ScrollViewer Grid.Row="2">
+                            <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            d:Text="0.0000000"
+                                            FontSize="16"
+                                            Foreground="{StaticResource SuccessBrush}"
+                                            Text="{Binding Result}">
+                                            <b:Interaction.Triggers>
+                                                <b:DataTrigger
+                                                    Binding="{Binding IsFound}"
+                                                    Comparison="Equal"
+                                                    Value="True">
+                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                </b:DataTrigger>
+                                                <b:DataTrigger
+                                                    Binding="{Binding IsFound}"
+                                                    Comparison="Equal"
+                                                    Value="False">
+                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                </b:DataTrigger>
+                                            </b:Interaction.Triggers>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <d:TextBlock
+                                    d:Text="0.0000000"
+                                    FontSize="16"
+                                    Foreground="{StaticResource SuccessBrush}">
+                                    <b:Interaction.Triggers>
+                                        <b:DataTrigger
+                                            Binding="{Binding IsFound}"
+                                            Comparison="Equal"
+                                            Value="True">
+                                            <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                        </b:DataTrigger>
+                                        <b:DataTrigger
+                                            Binding="{Binding IsFound}"
+                                            Comparison="Equal"
+                                            Value="False">
+                                            <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                        </b:DataTrigger>
+                                    </b:Interaction.Triggers>
+                                </d:TextBlock>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</hc:Window>
