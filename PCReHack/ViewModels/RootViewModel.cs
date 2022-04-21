@@ -86,7 +86,7 @@ namespace PCReHack.ViewModels
                 RightRectViewModel.ClickInterval = ClickInterval;
                 RightRectViewModel.Threshold = Threshold;
                 CenterRectViewModel.NextScreenTime = NextScreenTime;
-                CenterRectViewModel.ClickInterval = ClickInterval;
+                CenterRectViewModel.ClickInterval = 0;
                 CenterRectViewModel.Threshold = Threshold;
                 Task.Run(async () =>
                 {
@@ -137,8 +137,8 @@ namespace PCReHack.ViewModels
                 {
                     RectViewModel viewModel = null;
                     if (title == LeftRectViewModel.Title) { viewModel = LeftRectViewModel; }
-                    else if (title == RightRectViewModel.Title) { viewModel = LeftRectViewModel; }
-                    else if (title == CenterRectViewModel.Title) { viewModel = LeftRectViewModel; }
+                    else if (title == RightRectViewModel.Title) { viewModel = RightRectViewModel; }
+                    else if (title == CenterRectViewModel.Title) { viewModel = CenterRectViewModel; }
                     if (viewModel is null) return;
 
                     viewModel.TempImageList.Add(
@@ -146,7 +146,7 @@ namespace PCReHack.ViewModels
                         {
                             Bitmap = bitmap,
                             Image = b,
-                            Name = filename,
+                            Name = filename[(filename.LastIndexOf("\\")+1)..],
                             Template = bitmap.ToImage<Bgr, byte>()
                         });
                     viewModel.AdjustHW();

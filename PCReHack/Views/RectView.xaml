@@ -51,7 +51,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource PrimaryTextBrush}"
-                    Text="左窗口" />
+                    Text="{Binding Title}" />
             </Border>
             <!--#endregion-->
         </Grid>

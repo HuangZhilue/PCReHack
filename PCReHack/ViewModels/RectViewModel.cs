@@ -80,8 +80,11 @@ namespace PCReHack.ViewModels
             MinWidth = Width;
         }
 
+        public bool LastFound { get; set; }
+
         public async Task<bool> ScreenshutAsync()
         {
+            var isFound = false;
             try
             {
                 ScreenshutResults.Clear();
@@ -124,11 +127,12 @@ namespace PCReHack.ViewModels
                         }
                     });
 
-                    if (IsFound)
+                    if (IsFound && !LastFound)
                     {
                         ScreenshutResults.Add(match);
                     }
                 }
+
 
                 if (ScreenshutResults.Count > 0 && !Title.Contains("中间"))
                 {
@@ -141,8 +145,7 @@ namespace PCReHack.ViewModels
                         await Task.Delay(ClickInterval).ConfigureAwait(false);
                     }
 
-                    await Task.Delay(NextScreenTime).ConfigureAwait(false);
-                    return true;
+                    isFound = true;
                 }
                 else if (ScreenshutResults.Count > 0 && Title.Contains("中间"))
                 {
@@ -155,8 +158,10 @@ namespace PCReHack.ViewModels
                     }
 
                     await Task.Delay(1000).ConfigureAwait(false);
-                    return true;
+                    isFound = true;
                 }
+
+                LastFound = isFound;
             }
             catch (Exception ex)
             {
@@ -164,7 +169,7 @@ namespace PCReHack.ViewModels
             }
 
             await Task.Delay(NextScreenTime).ConfigureAwait(false);
-            return false;
+            return isFound;
         }
     }
 }

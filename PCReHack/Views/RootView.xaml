@@ -76,6 +76,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="55" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
@@ -137,7 +138,11 @@
                                 </d:StackPanel>
                             </ListBox>
                         </ScrollViewer>
-                        <ScrollViewer Grid.Row="2">
+                        <GridSplitter
+                            Grid.Row="2"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" />
+                        <ScrollViewer Grid.Row="3">
                             <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -196,6 +201,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="55" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
@@ -257,7 +263,11 @@
                                 </d:StackPanel>
                             </ListBox>
                         </ScrollViewer>
-                        <ScrollViewer Grid.Row="2">
+                        <GridSplitter
+                            Grid.Row="2"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" />
+                        <ScrollViewer Grid.Row="3">
                             <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -316,6 +326,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="55" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
@@ -377,7 +388,11 @@
                                 </d:StackPanel>
                             </ListBox>
                         </ScrollViewer>
-                        <ScrollViewer Grid.Row="2">
+                        <GridSplitter
+                            Grid.Row="2"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" />
+                        <ScrollViewer Grid.Row="3">
                             <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
