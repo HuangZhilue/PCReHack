@@ -115,7 +115,7 @@ namespace PCReHack.ViewModels
                         Name = temp.Name,
                         Result = maxValues[0],
                         IsFound = IsFound,
-                        ClickTimes = temp.Name.Contains("G_") ? 1 : temp.Name.Contains("B_") ? 2 : 3
+                        ClickTimes = temp.Name.Contains("R_") ? 3 : temp.Name.Contains("B_") ? 2 : 1
                     };
                     //EventAggregator.Publish(match, nameof(RootViewModel));
                     Execute.OnUIThreadSync(() =>
