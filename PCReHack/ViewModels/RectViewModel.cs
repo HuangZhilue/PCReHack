@@ -17,7 +17,7 @@ namespace PCReHack.ViewModels
 {
     public class RectViewModel : Screen, IHandle<string>
     {
-        public string Title { get; set; } = "PCR 左侧检测框";
+        public string Title { get; set; } = "检测框";
         public double TitleHeight { get; set; } = 15;
         public double Padding { get; set; } = 10;
         public double Top { get; set; }
@@ -104,10 +104,9 @@ namespace PCReHack.ViewModels
                     result.MinMax(out _, out double[] maxValues, out _, out _);
 
                     // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-
-                    Debug.WriteLine($"{Title}:\t{temp.Name}:\t{maxValues[0]}");
-
                     IsFound = maxValues[0] > Threshold;
+
+                    //Debug.WriteLine($"{Title}:\t{temp.Name}:\t{maxValues[0]}");
 
                     MatchTemplateResult match = new()
                     {
@@ -118,7 +117,7 @@ namespace PCReHack.ViewModels
                         ClickTimes = temp.Name.Contains("R_") ? 3 : temp.Name.Contains("B_") ? 2 : 1
                     };
                     //EventAggregator.Publish(match, nameof(RootViewModel));
-                    Execute.OnUIThreadSync(() =>
+                    _ = Execute.OnUIThreadAsync(() =>
                     {
                         MatchTemplateResults.Add(match);
                         if (MatchTemplateResults.Count > 10)
@@ -133,7 +132,6 @@ namespace PCReHack.ViewModels
                     }
                 }
 
-
                 if (ScreenshutResults.Count > 0 && !Title.Contains("中间"))
                 {
                     var match = ScreenshutResults.Where(m => m.IsFound && m.Result > Threshold).MaxBy(m => m.Result);
@@ -142,8 +140,11 @@ namespace PCReHack.ViewModels
                         MouseOperations.SetCursorPosition(x: (int)(Left + Width / 2), y: (int)(Top + Height - 5));
                         MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftDown);
                         MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftUp);
+                        //if (i < match.ClickTimes - 1) 
                         await Task.Delay(ClickInterval).ConfigureAwait(false);
                     }
+
+                    await Task.Delay(NextScreenTime).ConfigureAwait(false);
 
                     isFound = true;
                 }
@@ -157,7 +158,8 @@ namespace PCReHack.ViewModels
                         MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftUp);
                     }
 
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(1200).ConfigureAwait(false);
+
                     isFound = true;
                 }
 

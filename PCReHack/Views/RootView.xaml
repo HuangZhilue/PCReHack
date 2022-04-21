@@ -149,7 +149,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="50" />
                                                 <ColumnDefinition Width="5" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
@@ -304,7 +304,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="50" />
                                                 <ColumnDefinition Width="5" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
@@ -459,7 +459,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="50" />
                                                 <ColumnDefinition Width="5" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>

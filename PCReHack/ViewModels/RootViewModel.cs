@@ -5,11 +5,9 @@ using PCReHack.Models;
 using PCReHack.Properties;
 using Stylet;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace PCReHack.ViewModels
 {
@@ -18,9 +16,9 @@ namespace PCReHack.ViewModels
         public string Title { get; set; } = "PCReHack";
         public double Top { get; set; } = 200;
         public double Left { get; set; } = 200;
-        public double Threshold { get; set; } = 0.4;
-        public int ClickInterval { get; set; } = 200;
-        public int NextScreenTime { get; set; } = 200;
+        public double Threshold { get; set; } = 0.44;
+        public int ClickInterval { get; set; } = 20;
+        public int NextScreenTime { get; set; } = 50;
         public bool IsStart { get; set; }
 
         public RectViewModel LeftRectViewModel { get; set; }
@@ -34,25 +32,6 @@ namespace PCReHack.ViewModels
             EventAggregator = eventAggregator;
             EventAggregator.Subscribe(this, nameof(RootViewModel));
             WindowManager = windowManager;
-
-            LeftRectViewModel = new(EventAggregator)
-            {
-                Title = "左侧检测框",
-                Top = Top + 100,
-                Left = Left + 100,
-            };
-            RightRectViewModel = new(EventAggregator)
-            {
-                Title = "右侧检测框",
-                Top = Top + 100,
-                Left = Left + 300,
-            };
-            CenterRectViewModel = new(EventAggregator)
-            {
-                Title = "中间检测框",
-                Top = Top + 300,
-                Left = Left + 200,
-            };
         }
 
         public void Handle(MatchTemplateResult message)
@@ -146,7 +125,7 @@ namespace PCReHack.ViewModels
                         {
                             Bitmap = bitmap,
                             Image = b,
-                            Name = filename[(filename.LastIndexOf("\\")+1)..],
+                            Name = filename[(filename.LastIndexOf("\\") + 1)..],
                             Template = bitmap.ToImage<Bgr, byte>()
                         });
                     viewModel.AdjustHW();
@@ -195,6 +174,25 @@ namespace PCReHack.ViewModels
 
         protected override void OnViewLoaded()
         {
+            LeftRectViewModel = new(EventAggregator)
+            {
+                Title = "左侧检测框",
+                Top = Top + 100,
+                Left = Left + 100,
+            };
+            RightRectViewModel = new(EventAggregator)
+            {
+                Title = "右侧检测框",
+                Top = Top + 100,
+                Left = Left + 300,
+            };
+            CenterRectViewModel = new(EventAggregator)
+            {
+                Title = "中间检测框",
+                Top = Top + 300,
+                Left = Left + 200,
+            };
+
             var image1 = new List<TempImage>(){
                 new TempImage()
                 {

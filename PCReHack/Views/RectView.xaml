@@ -45,7 +45,7 @@
             <!--#region 窗体拖拽-->
             <Border
                 hc:WindowAttach.IsDragElement="True"
-                Background="{DynamicResource BackgroundBrush}"
+                Background="{DynamicResource BorderBrush}"
                 BorderBrush="{DynamicResource BorderBrush}">
                 <TextBlock
                     HorizontalAlignment="Center"
