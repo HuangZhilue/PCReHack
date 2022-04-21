@@ -13,6 +13,7 @@
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type={x:Type viewModels:RootViewModel}}"
+    Background="{DynamicResource SecondaryRegionBrush}"
     Left="{Binding Left, Mode=OneWayToSource}"
     ShowTitle="True"
     Top="{Binding Top, Mode=OneWayToSource}"
@@ -91,10 +92,10 @@
                                 CommandParameter="{Binding Title}">
                                 <Path
                                     Data="{StaticResource DownloadGeometry}"
-                                    Fill="Black"
+                                    Fill="{StaticResource PrimaryTextBrush}"
                                     RenderTransformOrigin="0.5,0.5"
                                     Stretch="Uniform"
-                                    Stroke="Black">
+                                    Stroke="{StaticResource PrimaryTextBrush}">
                                     <Path.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform ScaleY="-1" />
@@ -146,26 +147,56 @@
                             <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock
-                                            d:Text="0.0000000"
-                                            FontSize="16"
-                                            Foreground="{StaticResource SuccessBrush}"
-                                            Text="{Binding Result}">
-                                            <b:Interaction.Triggers>
-                                                <b:DataTrigger
-                                                    Binding="{Binding IsFound}"
-                                                    Comparison="Equal"
-                                                    Value="True">
-                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
-                                                </b:DataTrigger>
-                                                <b:DataTrigger
-                                                    Binding="{Binding IsFound}"
-                                                    Comparison="Equal"
-                                                    Value="False">
-                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
-                                                </b:DataTrigger>
-                                            </b:Interaction.Triggers>
-                                        </TextBlock>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="5" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                d:Text="0.0000000"
+                                                FontSize="16"
+                                                Foreground="{StaticResource SuccessBrush}"
+                                                Text="{Binding Name}">
+                                                <b:Interaction.Triggers>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="True">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    </b:DataTrigger>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="False">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                    </b:DataTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBlock>
+                                            <hc:Divider Grid.Column="1" Orientation="Vertical" />
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                d:Text="0.0000000"
+                                                FontSize="16"
+                                                Foreground="{StaticResource SuccessBrush}"
+                                                Text="{Binding Result}">
+                                                <b:Interaction.Triggers>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="True">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    </b:DataTrigger>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="False">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                    </b:DataTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBlock>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                                 <d:TextBlock
@@ -216,10 +247,10 @@
                                 CommandParameter="{Binding Title}">
                                 <Path
                                     Data="{StaticResource DownloadGeometry}"
-                                    Fill="Black"
+                                    Fill="{StaticResource PrimaryTextBrush}"
                                     RenderTransformOrigin="0.5,0.5"
                                     Stretch="Uniform"
-                                    Stroke="Black">
+                                    Stroke="{StaticResource PrimaryTextBrush}">
                                     <Path.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform ScaleY="-1" />
@@ -271,26 +302,56 @@
                             <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock
-                                            d:Text="0.0000000"
-                                            FontSize="16"
-                                            Foreground="{StaticResource SuccessBrush}"
-                                            Text="{Binding Result}">
-                                            <b:Interaction.Triggers>
-                                                <b:DataTrigger
-                                                    Binding="{Binding IsFound}"
-                                                    Comparison="Equal"
-                                                    Value="True">
-                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
-                                                </b:DataTrigger>
-                                                <b:DataTrigger
-                                                    Binding="{Binding IsFound}"
-                                                    Comparison="Equal"
-                                                    Value="False">
-                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
-                                                </b:DataTrigger>
-                                            </b:Interaction.Triggers>
-                                        </TextBlock>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="5" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                d:Text="0.0000000"
+                                                FontSize="16"
+                                                Foreground="{StaticResource SuccessBrush}"
+                                                Text="{Binding Name}">
+                                                <b:Interaction.Triggers>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="True">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    </b:DataTrigger>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="False">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                    </b:DataTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBlock>
+                                            <hc:Divider Grid.Column="1" Orientation="Vertical" />
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                d:Text="0.0000000"
+                                                FontSize="16"
+                                                Foreground="{StaticResource SuccessBrush}"
+                                                Text="{Binding Result}">
+                                                <b:Interaction.Triggers>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="True">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    </b:DataTrigger>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="False">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                    </b:DataTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBlock>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                                 <d:TextBlock
@@ -341,10 +402,10 @@
                                 CommandParameter="{Binding Title}">
                                 <Path
                                     Data="{StaticResource DownloadGeometry}"
-                                    Fill="Black"
+                                    Fill="{StaticResource PrimaryTextBrush}"
                                     RenderTransformOrigin="0.5,0.5"
                                     Stretch="Uniform"
-                                    Stroke="Black">
+                                    Stroke="{StaticResource PrimaryTextBrush}">
                                     <Path.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform ScaleY="-1" />
@@ -396,26 +457,56 @@
                             <ListBox ItemsSource="{Binding MatchTemplateResults}" Style="{StaticResource StackPanelVerticalListBox}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock
-                                            d:Text="0.0000000"
-                                            FontSize="16"
-                                            Foreground="{StaticResource SuccessBrush}"
-                                            Text="{Binding Result}">
-                                            <b:Interaction.Triggers>
-                                                <b:DataTrigger
-                                                    Binding="{Binding IsFound}"
-                                                    Comparison="Equal"
-                                                    Value="True">
-                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
-                                                </b:DataTrigger>
-                                                <b:DataTrigger
-                                                    Binding="{Binding IsFound}"
-                                                    Comparison="Equal"
-                                                    Value="False">
-                                                    <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
-                                                </b:DataTrigger>
-                                            </b:Interaction.Triggers>
-                                        </TextBlock>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="5" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                d:Text="0.0000000"
+                                                FontSize="16"
+                                                Foreground="{StaticResource SuccessBrush}"
+                                                Text="{Binding Name}">
+                                                <b:Interaction.Triggers>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="True">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    </b:DataTrigger>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="False">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                    </b:DataTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBlock>
+                                            <hc:Divider Grid.Column="1" Orientation="Vertical" />
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                d:Text="0.0000000"
+                                                FontSize="16"
+                                                Foreground="{StaticResource SuccessBrush}"
+                                                Text="{Binding Result}">
+                                                <b:Interaction.Triggers>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="True">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    </b:DataTrigger>
+                                                    <b:DataTrigger
+                                                        Binding="{Binding IsFound}"
+                                                        Comparison="Equal"
+                                                        Value="False">
+                                                        <b:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource DangerBrush}" />
+                                                    </b:DataTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBlock>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                                 <d:TextBlock
