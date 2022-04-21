@@ -19,6 +19,9 @@
     Top="{Binding Top, Mode=OneWayToSource}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <hc:Window.InputBindings>
+        <KeyBinding Command="{s:Action Start}" Gesture="CTRL+R" />
+    </hc:Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -44,19 +47,19 @@
                 <Button
                     HorizontalAlignment="Right"
                     Command="{s:Action Start}"
-                    Content="Start">
+                    Content="Start (CTRL+R)">
                     <b:Interaction.Triggers>
                         <b:DataTrigger
                             Binding="{Binding IsStart}"
                             Comparison="Equal"
                             Value="True">
-                            <b:ChangePropertyAction PropertyName="Content" Value="Stop" />
+                            <b:ChangePropertyAction PropertyName="Content" Value="Stop (CTRL+R)" />
                         </b:DataTrigger>
                         <b:DataTrigger
                             Binding="{Binding IsStart}"
                             Comparison="Equal"
                             Value="False">
-                            <b:ChangePropertyAction PropertyName="Content" Value="Start" />
+                            <b:ChangePropertyAction PropertyName="Content" Value="Start (CTRL+R)" />
                         </b:DataTrigger>
                     </b:Interaction.Triggers>
                 </Button>
