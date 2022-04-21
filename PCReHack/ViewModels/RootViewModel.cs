@@ -215,13 +215,13 @@ namespace PCReHack.ViewModels
                     Name = nameof(Resource.R_L),
                     Template = Resource.R_L.ToImage<Bgr, byte>()
                 },
-                new TempImage()
-                {
-                    Bitmap = Resource.B_L_2,
-                    Image = Resource.B_L_2.BitmapToBitmapSource(),
-                    Name = nameof(Resource.B_L_2),
-                    Template = Resource.B_L_2.ToImage<Bgr, byte>()
-                },
+                //new TempImage()
+                //{
+                //    Bitmap = Resource.B_L_2,
+                //    Image = Resource.B_L_2.BitmapToBitmapSource(),
+                //    Name = nameof(Resource.B_L_2),
+                //    Template = Resource.B_L_2.ToImage<Bgr, byte>()
+                //},
             };
             var image2 = new List<TempImage>(){
                 new TempImage()
@@ -245,13 +245,13 @@ namespace PCReHack.ViewModels
                     Name = nameof(Resource.R_R),
                     Template = Resource.R_R.ToImage<Bgr, byte>()
                 },
-                new TempImage()
-                {
-                    Bitmap = Resource.B_R_2,
-                    Image = Resource.B_R_2.BitmapToBitmapSource(),
-                    Name = nameof(Resource.B_R_2),
-                    Template = Resource.B_R_2.ToImage<Bgr, byte>()
-                },
+                //new TempImage()
+                //{
+                //    Bitmap = Resource.B_R_2,
+                //    Image = Resource.B_R_2.BitmapToBitmapSource(),
+                //    Name = nameof(Resource.B_R_2),
+                //    Template = Resource.B_R_2.ToImage<Bgr, byte>()
+                //},
             };
             var image3 = new List<TempImage>(){
                 new TempImage()
