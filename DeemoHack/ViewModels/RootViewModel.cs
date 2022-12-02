@@ -18,6 +18,7 @@ public class RootViewModel : Screen
     // https://docs.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-injecttouchinput?redirectedfrom=MSDN
     // https://github.com/DuelCode/TouchSimulate/blob/master/InjectTouchInputTest/MainWindow.xaml.cs
     // https://github.com/furuya02/AlTouch
+    // https://social.technet.microsoft.com/wiki/contents/articles/6460.simulating-touch-input-in-windows-8-using-touch-injection-api.aspx
 
     private HookProc _globalLlMouseHookCallback;
     private IntPtr _hGlobalLlMouseHook;
