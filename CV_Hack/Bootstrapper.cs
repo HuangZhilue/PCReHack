@@ -1,8 +1,7 @@
-﻿using DeemoHack.ViewModels;
+﻿using CV_Hack.ViewModels;
 using Stylet;
-using System;
 
-namespace DeemoHack
+namespace CV_Hack
 {
     public class Bootstrapper : Bootstrapper<RootViewModel>
     {

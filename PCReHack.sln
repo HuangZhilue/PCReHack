@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32408.312
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PCReHack", "PCReHack\PCReHack.csproj", "{81B63788-7CEC-4FC1-B2AC-13EE219D302B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeemoHack", "DeemoHack\DeemoHack.csproj", "{989D0CA5-7D83-4A19-AA5C-028E07D2AB53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CV_Hack", "CV_Hack\CV_Hack.csproj", "{989D0CA5-7D83-4A19-AA5C-028E07D2AB53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

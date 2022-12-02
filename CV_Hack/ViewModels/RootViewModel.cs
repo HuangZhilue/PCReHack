@@ -1,4 +1,4 @@
-﻿using DeemoHack.Helper.WinAPI;
+﻿using CV_Hack.Helper.WinAPI;
 using HandyControl.Tools;
 using Stylet;
 using System;
@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using static DeemoHack.Helper.WinAPI.TouchInjector;
+using static CV_Hack.Helper.WinAPI.TouchInjector;
 using IContainer = StyletIoC.IContainer;
 
-namespace DeemoHack.ViewModels;
+namespace CV_Hack.ViewModels;
 
 public class RootViewModel : Screen
 {

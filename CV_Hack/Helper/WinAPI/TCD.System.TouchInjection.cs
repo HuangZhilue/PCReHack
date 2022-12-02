@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace DeemoHack.Helper.WinAPI;
+namespace CV_Hack.Helper.WinAPI;
 
 /// <summary>
 /// Use this Classes static methods to initialize and inject touch input.

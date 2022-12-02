@@ -1,4 +1,4 @@
-﻿namespace DeemoHack.Views;
+﻿namespace CV_Hack.Views;
 
 public partial class TestView : HandyControl.Controls.Window
 {

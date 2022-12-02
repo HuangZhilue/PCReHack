@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace DeemoHack
+namespace CV_Hack
 {
     public partial class App : Application
     {

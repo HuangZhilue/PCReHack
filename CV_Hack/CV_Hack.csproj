@@ -3,13 +3,13 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <AssemblyName>DeemoHack</AssemblyName>
-    <RootNamespace>DeemoHack</RootNamespace>
+    <AssemblyName>CV_Hack</AssemblyName>
+    <RootNamespace>CV_Hack</RootNamespace>
     <Version>1.0.0.0</Version>
     <Configurations>Debug;Release</Configurations>
     <Copyright>Copyright © huang 2022</Copyright>
-    <FileVersion>1.0.171.0901</FileVersion>
-    <AssemblyVersion>1.0.171.0901</AssemblyVersion>
+    <FileVersion>1.0.173.0925</FileVersion>
+    <AssemblyVersion>1.0.173.0925</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;Core</DefineConstants>

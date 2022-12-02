@@ -1,4 +1,4 @@
-﻿namespace DeemoHack.Views;
+﻿namespace CV_Hack.Views;
 
 public partial class RootView : HandyControl.Controls.Window
 {

@@ -4,7 +4,7 @@ using StyletIoC;
 using System;
 using System.Linq;
 
-namespace DeemoHack.ViewModels;
+namespace CV_Hack.ViewModels;
 
 public class TestViewModel :  Conductor<Screen>.Collection.AllActive
 {
@@ -34,10 +34,10 @@ public class TestViewModel :  Conductor<Screen>.Collection.AllActive
             else
             {
                 Type type = Type.GetType(
-                    nameof(DeemoHack) +
+                    nameof(CV_Hack) +
                     $".{nameof(ViewModels)}" +
                     $".{viewModelString}" +
-                    $", {nameof(DeemoHack)}");
+                    $", {nameof(CV_Hack)}");
                 if (Container.Get(type) is Screen vm)
                 {
                     vm.DisplayName = viewModelString;

@@ -1,5 +1,5 @@
 ﻿using ColorPicker.Models;
-using DeemoHack.Helper;
+using CV_Hack.Helper;
 using OpenCvSharp;
 using Stylet;
 using StyletIoC;
@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Drawing;
 using BitmapSource = System.Windows.Media.Imaging.BitmapSource;
 
-namespace DeemoHack.ViewModels.Test.OpenCV;
+namespace CV_Hack.ViewModels.Test.OpenCV;
 
 public class InRangeViewModel : Screen
 {

@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using MessageBox = HandyControl.Controls.MessageBox;
 
-namespace DeemoHack.Helper;
+namespace CV_Hack.Helper;
 
 public static class CommonHelper
 {

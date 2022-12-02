@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace DeemoHack.Views.Test.OpenCV
+namespace CV_Hack.Views.Test.OpenCV
 {
     /// <summary>
     /// InRangeView.xaml 的交互逻辑

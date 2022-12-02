@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace DeemoHack.Helper.WinAPI;
+namespace CV_Hack.Helper.WinAPI;
 
 /// <summary>
 ///     The CallWndProc hook procedure is an application-defined or library-defined
