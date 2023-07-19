@@ -1,0 +1,419 @@
+﻿<Page
+    x:Class="CV_ViewTool.Views.InRangePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Converters="clr-namespace:CV_ViewTool.Converters"
+    xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:CV_ViewTool.Properties"
+    xmlns:viewmodels="clr-namespace:CV_ViewTool.ViewModels"
+    Title="aaaaa"
+    d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:InRangeViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{DynamicResource MahApps.Styles.Page}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Converters:ColorStateToStringConverter x:Key="ColorStateToStringConverter" />
+    </Page.Resources>
+    <Grid Margin="{StaticResource SmallTopBottomMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Margin="{StaticResource MediumLeftMargin}"
+            Style="{StaticResource PageTitleStyle}"
+            Text="{x:Static properties:Resources.InRangePageTitle}" />
+        <Grid
+            Grid.Row="1"
+            Margin="{StaticResource MediumLeftRightMargin}"
+            Background="{DynamicResource MahApps.Brushes.Gray10}">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <GridSplitter Grid.RowSpan="3" Grid.Column="1" />
+                <GridSplitter Grid.Row="1" Grid.Column="2" />
+
+                <ScrollViewer
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="0">
+                    <StackPanel Margin="{StaticResource MediumLeftRightMargin}">
+                        <StackPanel Margin="{StaticResource SmallTopMargin}" Orientation="Horizontal">
+                            <Button
+                                HorizontalAlignment="Left"
+                                Command="{Binding GetImageCommand}"
+                                Content="Select Image"
+                                Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" />
+                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Margin="{StaticResource SmallTopMargin}"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextStyle}"
+                                Text="Threshold" />
+                            <Slider
+                                x:Name="previewSliderT"
+                                Grid.Column="1"
+                                Margin="{StaticResource XSmallTopMargin}"
+                                Background="{DynamicResource LightInfoBrush}"
+                                Maximum="255"
+                                Minimum="0"
+                                Value="{Binding Threshold}">
+                                <i:Interaction.Triggers>
+                                    <i:PropertyChangedTrigger Binding="{Binding Value, ElementName=previewSliderT}">
+                                        <i:InvokeCommandAction Command="{Binding ImageProcessingCommand}" />
+                                    </i:PropertyChangedTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Margin="{StaticResource SmallTopMargin}"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextStyle}"
+                                Text="Binary" />
+                            <Slider
+                                x:Name="previewSliderMB"
+                                Grid.Column="1"
+                                Margin="{StaticResource XSmallTopMargin}"
+                                Background="{DynamicResource LightInfoBrush}"
+                                Maximum="255"
+                                Minimum="0"
+                                Value="{Binding MaxBinary}">
+                                <i:Interaction.Triggers>
+                                    <i:PropertyChangedTrigger Binding="{Binding Value, ElementName=previewSliderMB}">
+                                        <i:InvokeCommandAction Command="{Binding ImageProcessingCommand}" />
+                                    </i:PropertyChangedTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                        </Grid>
+                        <StackPanel Margin="{StaticResource SmallTopMargin}" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource BodyTextStyle}" Text="Threshold:" />
+                            <TextBlock
+                                Margin="{StaticResource SmallLeftRightMargin}"
+                                d:Text="threshold"
+                                Style="{StaticResource BodyTextStyle}"
+                                Text="{Binding Value, ElementName=previewSliderT, StringFormat=\0}" />
+                            <TextBlock
+                                Margin="{StaticResource SmallLeftRightMargin}"
+                                Style="{StaticResource BodyTextStyle}"
+                                Text="Binary:" />
+                            <TextBlock
+                                Margin="{StaticResource SmallLeftRightMargin}"
+                                d:Text="binary"
+                                Style="{StaticResource BodyTextStyle}"
+                                Text="{Binding Value, ElementName=previewSliderMB, StringFormat=\0}" />
+                        </StackPanel>
+                        <StackPanel Margin="{StaticResource SmallTopMargin}" Orientation="Horizontal">
+                            <Button
+                                Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
+                                Background="{Binding ColorState, Converter={StaticResource ColorStateToStringConverter}}"
+                                Style="{StaticResource MahApps.Styles.Button.MetroSquare}">
+                                <Button.Content>
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock FontSize="{StaticResource MahApps.Font.Size.Button.Flat}" Text="HSV:" />
+                                        <TextBlock
+                                            Margin="{StaticResource SmallLeftMargin}"
+                                            d:Text="Hxx"
+                                            FontSize="{StaticResource MahApps.Font.Size.Button.Flat}"
+                                            Text="{Binding ColorState.HSV_H, StringFormat=0.00}" />
+                                        <TextBlock
+                                            Margin="{StaticResource SmallLeftMargin}"
+                                            d:Text="Sxx"
+                                            FontSize="{StaticResource MahApps.Font.Size.Button.Flat}"
+                                            Text="{Binding ColorState.HSV_S, StringFormat=0.00}" />
+                                        <TextBlock
+                                            Margin="{StaticResource SmallLeftMargin}"
+                                            d:Text="Vxx"
+                                            FontSize="{StaticResource MahApps.Font.Size.Button.Flat}"
+                                            Text="{Binding ColorState.HSV_V, StringFormat=0.00}" />
+                                    </StackPanel>
+                                </Button.Content>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:ChangePropertyAction
+                                            PropertyName="Visibility"
+                                            TargetName="colorPickerGrid1"
+                                            Value="Visible" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+
+                        <CheckBox
+                            x:Name="checkBox"
+                            Margin="{StaticResource SmallTopMargin}"
+                            Content="Use InRange"
+                            IsChecked="{Binding UseInRange}">
+                            <CheckBox.Style>
+                                <Style BasedOn="{StaticResource MahApps.Styles.CheckBox.Win10}" TargetType="CheckBox">
+                                    <Setter Property="FontSize" Value="{StaticResource MahApps.Font.Size.Button.Flat}" />
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                        <StackPanel Margin="{StaticResource SmallTopMargin}" Orientation="Horizontal">
+                            <Button
+                                Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
+                                Background="{Binding ColorState2, Converter={StaticResource ColorStateToStringConverter}}"
+                                IsEnabled="{Binding ElementName=checkBox, Path=IsChecked}"
+                                Style="{StaticResource MahApps.Styles.Button.MetroSquare}">
+                                <Button.Content>
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock FontSize="{StaticResource MahApps.Font.Size.Button.Flat}" Text="HSV:" />
+                                        <TextBlock
+                                            Margin="{StaticResource SmallLeftMargin}"
+                                            d:Text="Hxx"
+                                            FontSize="{StaticResource MahApps.Font.Size.Button.Flat}"
+                                            Text="{Binding ColorState2.HSV_H, StringFormat=0.00}" />
+                                        <TextBlock
+                                            Margin="{StaticResource SmallLeftMargin}"
+                                            d:Text="Sxx"
+                                            FontSize="{StaticResource MahApps.Font.Size.Button.Flat}"
+                                            Text="{Binding ColorState2.HSV_S, StringFormat=0.00}" />
+                                        <TextBlock
+                                            Margin="{StaticResource SmallLeftMargin}"
+                                            d:Text="Vxx"
+                                            FontSize="{StaticResource MahApps.Font.Size.Button.Flat}"
+                                            Text="{Binding ColorState2.HSV_V, StringFormat=0.00}" />
+                                    </StackPanel>
+                                </Button.Content>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:ChangePropertyAction
+                                            PropertyName="Visibility"
+                                            TargetName="colorPickerGrid2"
+                                            Value="Visible" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Margin="{StaticResource SmallTopMargin}" Orientation="Horizontal">
+                            <Button Content="Save" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:ChangePropertyAction
+                                            PropertyName="Visibility"
+                                            TargetName="saveBox"
+                                            Value="Visible" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+                <Grid Grid.Row="0" Grid.Column="2">
+                    <Image
+                        MinWidth="100"
+                        MinHeight="100"
+                        Margin="10"
+                        Source="{Binding BitmapSource}"
+                        Stretch="Uniform" />
+                </Grid>
+
+                <Grid Grid.Row="2" Grid.Column="2">
+                    <Image
+                        MinWidth="100"
+                        MinHeight="100"
+                        Margin="10"
+                        Source="{Binding BitmapSource2}"
+                        Stretch="Uniform" />
+                </Grid>
+
+                <Grid
+                    x:Name="colorPickerGrid1"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    d:Visibility="Hidden"
+                    Background="#66000000"
+                    Visibility="Hidden">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel>
+                            <colorpicker:StandardColorPicker
+                                Width="220"
+                                Height="450"
+                                Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                                ColorState="{Binding ColorState, Mode=TwoWay}"
+                                ShowAlpha="True">
+                                <colorpicker:StandardColorPicker.Style>
+                                    <Style TargetType="colorpicker:StandardColorPicker">
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource Theme.PrimaryAccentColor}" />
+                                            <Style BasedOn="{StaticResource MahApps.Styles.ComboBox}" TargetType="ComboBox">
+                                                <Setter Property="Width" Value="80" />
+                                                <Setter Property="FontSize" Value="12" />
+                                                <Setter Property="Margin" Value="0" />
+                                            </Style>
+                                            <Style BasedOn="{StaticResource MahApps.Styles.Label}" TargetType="Label" />
+                                            <Style BasedOn="{StaticResource MahApps.Styles.TextBox}" TargetType="TextBox">
+                                                <Setter Property="FontSize" Value="12" />
+                                            </Style>
+                                            <Style BasedOn="{StaticResource MahApps.Styles.TabControl.ColorPicker}" TargetType="TabControl">
+                                                <Setter Property="MaxHeight" Value="200" />
+                                            </Style>
+                                        </Style.Resources>
+                                    </Style>
+                                </colorpicker:StandardColorPicker.Style>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="ColorChanged">
+                                        <i:InvokeCommandAction Command="{Binding ImageProcessingCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </colorpicker:StandardColorPicker>
+                            <Button
+                                Margin="{StaticResource MediumTopMargin}"
+                                Content="X"
+                                Style="{StaticResource MahApps.Styles.Button.Square}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:ChangePropertyAction
+                                            PropertyName="Visibility"
+                                            TargetName="colorPickerGrid1"
+                                            Value="Hidden" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+                <Grid
+                    x:Name="colorPickerGrid2"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    d:Visibility="Hidden"
+                    Background="#66000000"
+                    Visibility="Hidden">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel>
+                            <colorpicker:StandardColorPicker
+                                Width="220"
+                                Height="450"
+                                Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                                ColorState="{Binding ColorState2, Mode=TwoWay}">
+                                <colorpicker:StandardColorPicker.Style>
+                                    <Style TargetType="colorpicker:StandardColorPicker">
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource Theme.PrimaryAccentColor}" />
+                                            <Style BasedOn="{StaticResource MahApps.Styles.ComboBox}" TargetType="ComboBox">
+                                                <Setter Property="Width" Value="80" />
+                                                <Setter Property="FontSize" Value="12" />
+                                                <Setter Property="Margin" Value="0" />
+                                            </Style>
+                                            <Style BasedOn="{StaticResource MahApps.Styles.Label}" TargetType="Label" />
+                                            <Style BasedOn="{StaticResource MahApps.Styles.TextBox}" TargetType="TextBox">
+                                                <Setter Property="FontSize" Value="12" />
+                                            </Style>
+                                            <Style BasedOn="{StaticResource MahApps.Styles.TabControl.ColorPicker}" TargetType="TabControl">
+                                                <Setter Property="MaxHeight" Value="200" />
+                                            </Style>
+                                        </Style.Resources>
+                                    </Style>
+                                </colorpicker:StandardColorPicker.Style>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="ColorChanged">
+                                        <i:InvokeCommandAction Command="{Binding ImageProcessingCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </colorpicker:StandardColorPicker>
+                            <Button
+                                Margin="{StaticResource MediumTopMargin}"
+                                Content="X"
+                                Style="{StaticResource MahApps.Styles.Button.Square}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:ChangePropertyAction
+                                            PropertyName="Visibility"
+                                            TargetName="colorPickerGrid2"
+                                            Value="Hidden" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid
+                x:Name="saveBox"
+                d:Visibility="Hidden"
+                Background="#66000000"
+                Visibility="Hidden">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid Width="300" Background="{StaticResource MahApps.Brushes.Flyout.Background}">
+                        <StackPanel Margin="{StaticResource SmallLeftTopRightBottomMargin}">
+                            <TextBlock
+                                Margin="{StaticResource SmallTopBottomMargin}"
+                                HorizontalAlignment="Left"
+                                Style="{StaticResource PageTitleStyle}"
+                                Text="Save to profile?" />
+                            <Grid Margin="{StaticResource SmallTopMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextStyle}"
+                                    Text="Profile Name" />
+                                <TextBox
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    d:Text="Green"
+                                    Style="{StaticResource MahApps.Styles.TextBox}"
+                                    Text="{Binding ProfileName}" />
+                            </Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button
+                                    Margin="{StaticResource MediumLeftTopRightMargin}"
+                                    Content="Save"
+                                    Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding SaveCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Button
+                                    Margin="{StaticResource MediumTopMargin}"
+                                    Content="Cancel"
+                                    Style="{StaticResource MahApps.Styles.Button.MetroSquare}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:ChangePropertyAction
+                                                PropertyName="Visibility"
+                                                TargetName="saveBox"
+                                                Value="Hidden" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
