@@ -98,6 +98,7 @@ public partial class App : Application
         services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
         services.AddSingleton<IPageService, PageService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IAppState, AppState>();
 
         // Views and ViewModels
         services.AddTransient<IShellWindow, ShellWindow>();
@@ -120,6 +121,9 @@ public partial class App : Application
 
         services.AddTransient<MonitorViewModel>();
         services.AddTransient<MonitorPage>();
+
+        services.AddTransient<ScreenCaptureViewModel>();
+        services.AddTransient<ScreenCapturePage>();
 
         // Configuration
         services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));

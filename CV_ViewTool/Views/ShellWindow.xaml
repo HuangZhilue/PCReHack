@@ -90,6 +90,10 @@
                                 AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource Self}}"
                                 Command="{Binding MenuViewsMonitorCommand}"
                                 Header="{x:Static properties:Resources.ShellMenuItemViewsMonitorPageHeader}" />
+                            <MenuItem
+                                AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource Self}}"
+                                Command="{Binding MenuViewsScreenCaptureCommand}"
+                                Header="{x:Static properties:Resources.ShellMenuItemViewsScreenCapturePageHeader}" />
                         </MenuItem>
                     </Menu>
                     <Frame

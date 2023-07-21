@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-    <data name="ShellMenuItemViewsMonitorPageHeader" xml:space="preserve">
+  <data name="ShellMenuItemViewsScreenCapturePageHeader" xml:space="preserve">
+		    <value>ScreenCapture</value>
+    </data>
+  <data name="ScreenCapturePageTitle" xml:space="preserve">
+		    <value>ScreenCapture</value>
+    </data>
+  <data name="ShellMenuItemViewsMonitorPageHeader" xml:space="preserve">
 		    <value>Monitor</value>
     </data>
-    <data name="MonitorPageTitle" xml:space="preserve">
+  <data name="MonitorPageTitle" xml:space="preserve">
 		    <value>Monitor</value>
     </data>
-    <data name="ShellMenuItemViewsInRangePageHeader" xml:space="preserve">
+  <data name="ShellMenuItemViewsInRangePageHeader" xml:space="preserve">
 		    <value>InRange</value>
     </data>
-    <data name="InRangePageTitle" xml:space="preserve">
+  <data name="InRangePageTitle" xml:space="preserve">
 		    <value>InRange</value>
     </data>
   <data name="ShellMenuItemViewsBlankPageHeader" xml:space="preserve">
@@ -168,5 +174,8 @@
 	</data>
   <data name="MainPageButtonAddItem" xml:space="preserve">
     <value>Add item</value>
+  </data>
+  <data name="MainPageButtonOpenNewScreenCaptureWindow" xml:space="preserve">
+    <value>Open New ScreenCapture Window</value>
   </data>
 </root>

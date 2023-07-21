@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="48" />
         </Grid.RowDefinitions>
         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
             <TextBlock
@@ -33,6 +34,12 @@
                 HorizontalAlignment="Left"
                 Command="{Binding AddItemCommand}"
                 Content="{x:Static properties:Resources.MainPageButtonAddItem}"
+                Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" />
+            <Button
+                Margin="{StaticResource MediumLeftMargin}"
+                HorizontalAlignment="Left"
+                Command="{Binding OpenNewScreenCaptureWindowCommand}"
+                Content="{x:Static properties:Resources.MainPageButtonOpenNewScreenCaptureWindow}"
                 Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" />
         </StackPanel>
         <Grid
@@ -173,5 +180,37 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <!--<Button
+                Margin="{StaticResource MediumLeftMargin}"
+                HorizontalAlignment="Left"
+                Command="{Binding AddItemCommand}"
+                Content="{x:Static properties:Resources.MainPageButtonAddItem}"
+                Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" />-->
+            <Button
+                Margin="{StaticResource MediumLeftRightMargin}"
+                HorizontalAlignment="Left"
+                Command="{Binding StartCommand}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" TargetType="Button">
+                        <Setter Property="Content" Value="Start" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsStart}" Value="True">
+                                <Setter Property="Content" Value="Stop" />
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Control.Validation}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsStart}" Value="False">
+                                <Setter Property="Content" Value="Start" />
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
     </Grid>
 </Page>

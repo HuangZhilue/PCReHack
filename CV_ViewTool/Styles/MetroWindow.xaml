@@ -7,19 +7,29 @@
         x:Key="CustomMetroWindow"
         BasedOn="{StaticResource {x:Type controls:MetroWindow}}"
         TargetType="{x:Type controls:MetroWindow}">
+        <Setter Property="SaveWindowPosition" Value="True" />
         <Setter Property="ShowTitleBar" Value="True" />
         <Setter Property="Height" Value="450" />
         <Setter Property="Width" Value="800" />
     </Style>
     <Style
-        x:Key="NoTitleMetroWindow"
-        BasedOn="{StaticResource {x:Type controls:MetroWindow}}"
+        x:Key="TransparencyMetroWindow"
+        BasedOn="{StaticResource CustomMetroWindow}"
         TargetType="{x:Type controls:MetroWindow}">
-        <Setter Property="ShowTitleBar" Value="true" />
-        <Setter Property="Height" Value="450" />
-        <Setter Property="Width" Value="800" />
         <Setter Property="AllowsTransparency" Value="True" />
-        <Setter Property="BorderThickness" Value="3" />
         <Setter Property="Background" Value="{x:Null}" />
+    </Style>
+    <Style
+        x:Key="TopMostTransparencyMetroWindow"
+        BasedOn="{StaticResource TransparencyMetroWindow}"
+        TargetType="{x:Type controls:MetroWindow}">
+        <Setter Property="Topmost" Value="True" />
+    </Style>
+    <Style
+        x:Key="LowTitleHeightTopMostTransparencyMetroWindow"
+        BasedOn="{StaticResource TopMostTransparencyMetroWindow}"
+        TargetType="{x:Type controls:MetroWindow}">
+        <Setter Property="ShowTitleBar" Value="True" />
+        <Setter Property="TitleBarHeight" Value="15" />
     </Style>
 </ResourceDictionary>

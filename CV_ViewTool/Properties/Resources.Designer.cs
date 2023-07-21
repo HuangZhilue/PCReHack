@@ -97,11 +97,38 @@ namespace CV_ViewTool.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Open New ScreenCapture Window 的本地化字符串。
+        /// </summary>
+        public static string MainPageButtonOpenNewScreenCaptureWindow {
+            get {
+                return ResourceManager.GetString("MainPageButtonOpenNewScreenCaptureWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Main 的本地化字符串。
         /// </summary>
         public static string MainPageTitle {
             get {
                 return ResourceManager.GetString("MainPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Monitor 的本地化字符串。
+        /// </summary>
+        public static string MonitorPageTitle {
+            get {
+                return ResourceManager.GetString("MonitorPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 ScreenCapture 的本地化字符串。
+        /// </summary>
+        public static string ScreenCapturePageTitle {
+            get {
+                return ResourceManager.GetString("ScreenCapturePageTitle", resourceCulture);
             }
         }
         
@@ -250,33 +277,29 @@ namespace CV_ViewTool.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Monitor 的本地化字符串。
+        /// </summary>
+        public static string ShellMenuItemViewsMonitorPageHeader {
+            get {
+                return ResourceManager.GetString("ShellMenuItemViewsMonitorPageHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 ScreenCapture 的本地化字符串。
+        /// </summary>
+        public static string ShellMenuItemViewsScreenCapturePageHeader {
+            get {
+                return ResourceManager.GetString("ShellMenuItemViewsScreenCapturePageHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 _Views 的本地化字符串。
         /// </summary>
         public static string ShellMenuViewsHeader {
             get {
                 return ResourceManager.GetString("ShellMenuViewsHeader", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Monitor.
-        /// </summary>
-        public static string MonitorPageTitle
-        {
-            get
-            {
-                return ResourceManager.GetString("MonitorPageTitle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to MenuItemViewsMonitorPageHeader.
-        /// </summary>
-        public static string ShellMenuItemViewsMonitorPageHeader
-        {
-            get
-            {
-                return ResourceManager.GetString("ShellMenuItemViewsMonitorPageHeader", resourceCulture);
             }
         }
     }

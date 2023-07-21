@@ -17,6 +17,7 @@
     <Page.Resources>
         <Converters:ColorStateToStringConverter x:Key="ColorStateToStringConverter" />
         <Converters:GreaterThanConverter x:Key="GreaterThanConverter" />
+        <Converters:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,13 +43,28 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
-            <Image
-                Grid.Row="0"
-                MinWidth="100"
-                MinHeight="100"
-                Margin="{StaticResource SmallLeftTopRightBottomMargin}"
-                Source="/Views/微信图片_20230718191039.png"
-                Stretch="Uniform" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image
+                    MinWidth="100"
+                    MinHeight="100"
+                    Margin="{StaticResource SmallLeftTopRightBottomMargin}"
+                    d:Source="/Views/微信图片_20230718191039.png"
+                    Source="{Binding OriginalImage}"
+                    Stretch="Uniform" />
+                <Image
+                    Grid.Column="1"
+                    MinWidth="100"
+                    MinHeight="100"
+                    Margin="{StaticResource SmallLeftTopRightBottomMargin}"
+                    d:Source="/Views/微信图片_20230718191039.png"
+                    Source="{Binding ProcessedImage}"
+                    Stretch="Uniform" />
+            </Grid>
             <GridSplitter
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
@@ -132,13 +148,40 @@
                             </StackPanel>
                         </StackPanel>
                     </WrapPanel>
-                    <StackPanel Margin="{StaticResource SmallTopBottomMargin}" Orientation="Horizontal">
+                    <WrapPanel
+                        Margin="{StaticResource SmallTopBottomMargin}"
+                        HorizontalAlignment="Stretch"
+                        Orientation="Horizontal">
                         <CheckBox
                             Margin="{StaticResource SmallLeftMargin}"
                             Content="Show Image?"
                             IsChecked="{Binding EnableImage}"
-                            ToolTip="显示图像时将占用部分系统资源来处理图像。" />
-                    </StackPanel>
+                            ToolTip="显示图像时将占用部分系统资源来渲染显示图像。" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="绑定到:" />
+                        <ComboBox
+                            MinWidth="120"
+                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type StackPanel}}}"
+                            d:SelectedIndex="0"
+                            ItemsSource="{Binding CameraNameList}"
+                            Style="{StaticResource MahApps.Styles.ComboBox}">
+                            <d:ComboBoxItem Content="XXXX" />
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownOpened">
+                                    <i:InvokeCommandAction Command="{Binding InitCameraListCommand}" />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SetCameraCommand}" CommandParameter="{Binding SelectedIndex, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="FPS:" />
+                        <TextBlock
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Foreground="Green"
+                            Style="{StaticResource BodyTextStyle}"
+                            Text="{Binding FPS}" />
+                    </WrapPanel>
                 </StackPanel>
             </StackPanel>
             <ScrollViewer

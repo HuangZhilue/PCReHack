@@ -5,19 +5,18 @@ using CV_ViewTool.Contracts.Services;
 using CV_ViewTool.Contracts.ViewModels;
 using CV_ViewTool.Helpers;
 using CV_ViewTool.Models;
-using CV_ViewTool.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace CV_ViewTool.ViewModels;
 
-public class ProbabilityRecord
+public class PercentageRecord
 {
     public DateTime DateTime { get; set; }
     public double Percentage { get; set; }
@@ -25,41 +24,45 @@ public class ProbabilityRecord
 
 public class MonitorViewModel : ObservableObject, INavigationAware
 {
-    private bool enableImage = true;
-    private string profileName = string.Empty;
-    private bool useInRange;
-    private BitmapSource bitmapSource;
-    private Bitmap bitmap1;
-    private BitmapSource bitmapSource2;
-    private Bitmap bitmap2;
-    private int threshold = 125;
-    private int maxBinary = 255;
-    private ColorState colorState = new();
-    private ColorState colorState2 = new();
-    private ICommand imageProcessingCommand;
-    private ICommand showImageCommand;
+    private bool _enableImage = true;
+    private string _profileName = string.Empty;
+    private bool _useInRange;
+    private BitmapImage _originalImage;
+    private BitmapImage _processedImage;
+    private int _threshold = 125;
+    private int _maxBinary = 255;
+    private int _fps = 0;
+    private ColorState _colorState = new();
+    private ColorState _colorState2 = new();
+    private ICommand _showImageCommand;
+    private ICommand _setCameraCommand;
+    private ICommand _initCameraListCommand;
 
-    public bool EnableImage { get => enableImage; set => SetProperty(ref enableImage, value); }
-    public string ProfileName { get => profileName; set => SetProperty(ref profileName, value); }
-    public bool UseInRange { get => useInRange; set => SetProperty(ref useInRange, value); }
-    public BitmapSource BitmapSource { get => bitmapSource; set => SetProperty(ref bitmapSource, value); }
-    public Bitmap Bitmap1 { get => bitmap1; set => SetProperty(ref bitmap1, value); }
-    public BitmapSource BitmapSource2 { get => bitmapSource2; set => SetProperty(ref bitmapSource2, value); }
-    public Bitmap Bitmap2 { get => bitmap2; set => SetProperty(ref bitmap2, value); }
-    public int Threshold { get => threshold; set => SetProperty(ref threshold, value); }
-    public int MaxBinary { get => maxBinary; set => SetProperty(ref maxBinary, value); }
-    public ColorState ColorState { get => colorState; set => SetProperty(ref colorState, value); }
-    public ColorState ColorState2 { get => colorState2; set => SetProperty(ref colorState2, value); }
-    public ObservableCollection<ProbabilityRecord> ProbabilityList { get; } = new();
+    public bool EnableImage { get => _enableImage; set => SetProperty(ref _enableImage, value); }
+    public string ProfileName { get => _profileName; set => SetProperty(ref _profileName, value); }
+    public bool UseInRange { get => _useInRange; set => SetProperty(ref _useInRange, value); }
+    public BitmapImage OriginalImage { get => _originalImage; set => SetProperty(ref _originalImage, value); }
+    public BitmapImage ProcessedImage { get => _processedImage; set => SetProperty(ref _processedImage, value); }
+    public int Threshold { get => _threshold; set => SetProperty(ref _threshold, value); }
+    public int MaxBinary { get => _maxBinary; set => SetProperty(ref _maxBinary, value); }
+    public int FPS { get => _fps; set => SetProperty(ref _fps, value); }
+    public ColorState ColorState { get => _colorState; set => SetProperty(ref _colorState, value); }
+    public ColorState ColorState2 { get => _colorState2; set => SetProperty(ref _colorState2, value); }
+    public ObservableCollection<string> CameraNameList { get; } = new();
+    public ObservableCollection<PercentageRecord> ProbabilityList { get; } = new();
 
-    public ICommand ImageProcessingCommand => imageProcessingCommand??=new RelayCommand(ImageProcessing);
-    public ICommand ShowImageCommand => showImageCommand??=new RelayCommand(() => { EnableImage = !EnableImage; });
+    public ICommand ShowImageCommand => _showImageCommand??=new RelayCommand(() => { EnableImage = !EnableImage; });
+    public ICommand SetCameraCommand => _setCameraCommand??=new RelayCommand<int>(SetCamera);
+    public ICommand InitCameraListCommand => _initCameraListCommand ??=new RelayCommand(InitCameraList);
 
     private Queue<Action> Queue { get; } = new();
     private object IsImageProcessing { get; } = new();
+    private IAppState AppState { get; }
 
     public MonitorViewModel(IServiceProvider service)
     {
+        AppState = service.GetRequiredService<IAppState>();
+
         Task.Run(async () =>
         {
             while (true)
@@ -82,19 +85,35 @@ public class MonitorViewModel : ObservableObject, INavigationAware
 
     public void OnNavigatedTo(object parameter)
     {
-        if (parameter is not string) return;
-        if (string.IsNullOrWhiteSpace(parameter.ToString())) return;
-        ProfileName = parameter.ToString();
-        string profileList = App.Current.Properties["ProfileList"]?.ToString() ?? "";
-        List<CVProfile> profiles = JsonConvert.DeserializeObject<List<CVProfile>>(profileList) ?? new();
-        if (profiles.FirstOrDefault(p => p.ProfileName.ToUpper() == ProfileName.ToUpper()) is not CVProfile profile)
-            return;
+        if (parameter is not Dictionary<string, object> dic) return;
 
-        Threshold = profile.Threshold;
-        MaxBinary = profile.MaxBinary;
-        ColorState = profile.ColorState;
-        ColorState2 = profile.ColorState2;
-        UseInRange = profile.UseInRange;
+        if (dic.ContainsKey("ProfileName") && dic["ProfileName"] is string profileName)
+        {
+            ProfileName = profileName;
+            string profileList = App.Current.Properties["ProfileList"]?.ToString() ?? "";
+            List<CVProfile> profiles = JsonConvert.DeserializeObject<List<CVProfile>>(profileList) ?? new();
+            if (profiles.FirstOrDefault(p => p.ProfileName.ToUpper() == ProfileName.ToUpper()) is not CVProfile profile)
+                return;
+
+            Threshold = profile.Threshold;
+            MaxBinary = profile.MaxBinary;
+            ColorState = profile.ColorState;
+            ColorState2 = profile.ColorState2;
+            UseInRange = profile.UseInRange;
+        }
+
+        if (dic.ContainsKey("ScreenShut") && dic["ScreenShut"] is Bitmap bitmap)
+        {
+            OriginalImage = bitmap.BitmapToBitmapImage();
+            //Task.Run(() =>
+            //{
+            ImageProcessing(bitmap);
+            //});
+        }
+        if (dic.ContainsKey("FPS") && dic["FPS"] is double fps)
+        {
+            FPS = (int)fps;
+        }
     }
 
     public void OnNavigatedFrom()
@@ -102,36 +121,74 @@ public class MonitorViewModel : ObservableObject, INavigationAware
         //throw new NotImplementedException();
     }
 
-    private void ImageProcessing()
+    private void SetCamera(int cameraIndex)
     {
-        if (!EnableImage || BitmapSource is null || Bitmap1 is null) return;
+        if (cameraIndex < 0 || cameraIndex >= CameraNameList.Count) return;
+        string name = CameraNameList[cameraIndex];
+        string monitorPageId = "MonitorWindow_" + ProfileName;
+        if (AppState.CameraMonitorState.ContainsKey(name))
+        {
+            foreach (string key in AppState.CameraMonitorState.Keys)
+            {
+                AppState.CameraMonitorState[key].Remove(monitorPageId);
+            }
+
+            if (!AppState.CameraMonitorState[name].Contains(monitorPageId))
+                AppState.CameraMonitorState[name].Add(monitorPageId);
+        }
+        else
+        {
+            AppState.CameraMonitorState.TryAdd(name, new() { monitorPageId });
+        }
+    }
+
+    private void InitCameraList()
+    {
+        CameraNameList.Clear();
+        foreach (string key in AppState.CameraState.Keys)
+        {
+            CameraNameList.Add(key);
+        }
+    }
+
+    private void ImageProcessing(Bitmap bitmap)
+    {
+        if (!EnableImage || bitmap is null) return;
 
         Queue.Enqueue((() =>
         {
-            using Mat image = OpenCvSharp.Extensions.BitmapConverter.ToMat(Bitmap1);
-            if (!UseInRange)
+            try
             {
-                Cv2.CvtColor(image, image, ColorConversionCodes.BGR2GRAY);
-                Cv2.Threshold(image, image, Threshold, MaxBinary, ThresholdTypes.Binary);
-                Bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
-            }
-            else
-            {
-                Cv2.CvtColor(image, image, ColorConversionCodes.BGR2HSV);
-                Cv2.InRange(
-                    image,
-                    new Scalar(ColorState.HSV_H / 2, ColorState.HSV_S * 255, ColorState.HSV_V * 255),
-                    new Scalar(ColorState2.HSV_H / 2, ColorState2.HSV_S * 255, ColorState2.HSV_V * 255),
-                    image);
-                Bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
-            }
-
-            if (Bitmap2 is not null)
-            {
-                App.Current.Dispatcher.Invoke(() =>
+                Bitmap bitmap2 = null;
+                using Mat image = OpenCvSharp.Extensions.BitmapConverter.ToMat(bitmap);
+                if (!UseInRange)
                 {
-                    BitmapSource2 = Bitmap2.BitmapToBitmapSource();
-                });
+                    Cv2.CvtColor(image, image, ColorConversionCodes.BGR2GRAY);
+                    Cv2.Threshold(image, image, Threshold, MaxBinary, ThresholdTypes.Binary);
+                    bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
+                }
+                else
+                {
+                    Cv2.CvtColor(image, image, ColorConversionCodes.BGR2HSV);
+                    Cv2.InRange(
+                            image,
+                            new Scalar(ColorState.HSV_H / 2, ColorState.HSV_S * 255, ColorState.HSV_V * 255),
+                            new Scalar(ColorState2.HSV_H / 2, ColorState2.HSV_S * 255, ColorState2.HSV_V * 255),
+                            image);
+                    bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
+                }
+
+                if (bitmap2 is not null)
+                {
+                    //App.Current.Dispatcher.Invoke(() =>
+                    //{
+                    ProcessedImage = bitmap2.BitmapToBitmapImage();
+                    //});
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
             }
         }));
         RunImageProcessingQueue();

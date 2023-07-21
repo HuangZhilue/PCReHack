@@ -1,11 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Input;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using CV_ViewTool.Contracts.Services;
-using CV_ViewTool.Properties;
+using System.Windows;
+using System.Windows.Input;
 
 namespace CV_ViewTool.ViewModels;
 
@@ -19,6 +16,7 @@ public class ShellViewModel : ObservableObject
     private readonly IRightPaneService _rightPaneService;
 
     private RelayCommand _goBackCommand;
+    private ICommand _menuViewsScreenCaptureCommand;
     private ICommand _menuViewsMonitorCommand;
     private ICommand _menuViewsInRangeCommand;
     private ICommand _menuViewsBlankCommand;
@@ -28,21 +26,25 @@ public class ShellViewModel : ObservableObject
     private ICommand _loadedCommand;
     private ICommand _unloadedCommand;
 
-    public RelayCommand GoBackCommand => _goBackCommand ?? (_goBackCommand = new RelayCommand(OnGoBack, CanGoBack));
+    //public event PropertyChangedEventHandler WindowsPropertyChanged;
 
-    public ICommand MenuFileSettingsCommand => _menuFileSettingsCommand ?? (_menuFileSettingsCommand = new RelayCommand(OnMenuFileSettings));
+    public RelayCommand GoBackCommand => _goBackCommand ??= new RelayCommand(OnGoBack, CanGoBack);
 
-    public ICommand MenuFileExitCommand => _menuFileExitCommand ?? (_menuFileExitCommand = new RelayCommand(OnMenuFileExit));
+    public ICommand MenuFileSettingsCommand => _menuFileSettingsCommand ??= new RelayCommand(OnMenuFileSettings);
 
-    public ICommand LoadedCommand => _loadedCommand ?? (_loadedCommand = new RelayCommand(OnLoaded));
+    public ICommand MenuFileExitCommand => _menuFileExitCommand ??= new RelayCommand(OnMenuFileExit);
 
-    public ICommand UnloadedCommand => _unloadedCommand ?? (_unloadedCommand = new RelayCommand(OnUnloaded));
+    public ICommand LoadedCommand => _loadedCommand ??= new RelayCommand(OnLoaded);
+
+    public ICommand UnloadedCommand => _unloadedCommand ??= new RelayCommand(OnUnloaded);
 
     public ShellViewModel(INavigationService navigationService, IRightPaneService rightPaneService)
     {
         _navigationService = navigationService;
         _rightPaneService = rightPaneService;
     }
+
+
 
     private void OnLoaded()
     {
@@ -69,7 +71,7 @@ public class ShellViewModel : ObservableObject
     private void OnMenuFileExit()
         => Application.Current.Shutdown();
 
-    public ICommand MenuViewsMainCommand => _menuViewsMainCommand ?? (_menuViewsMainCommand = new RelayCommand(OnMenuViewsMain));
+    public ICommand MenuViewsMainCommand => _menuViewsMainCommand ??= new RelayCommand(OnMenuViewsMain);
 
     private void OnMenuViewsMain()
         => _navigationService.NavigateTo(typeof(MainViewModel).FullName, null, true);
@@ -77,18 +79,30 @@ public class ShellViewModel : ObservableObject
     private void OnMenuFileSettings()
         => _rightPaneService.OpenInRightPane(typeof(SettingsViewModel).FullName);
 
-    public ICommand MenuViewsBlankCommand => _menuViewsBlankCommand ?? (_menuViewsBlankCommand = new RelayCommand(OnMenuViewsBlank));
+    public ICommand MenuViewsBlankCommand => _menuViewsBlankCommand ??= new RelayCommand(OnMenuViewsBlank);
 
     private void OnMenuViewsBlank()
         => _navigationService.NavigateTo(typeof(BlankViewModel).FullName, null, true);
 
-    public ICommand MenuViewsInRangeCommand => _menuViewsInRangeCommand ?? (_menuViewsInRangeCommand = new RelayCommand(OnMenuViewsInRange));
+    public ICommand MenuViewsInRangeCommand => _menuViewsInRangeCommand ??= new RelayCommand(OnMenuViewsInRange);
 
     private void OnMenuViewsInRange()
         => _navigationService.NavigateTo(typeof(InRangeViewModel).FullName, null, true);
 
-    public ICommand MenuViewsMonitorCommand => _menuViewsMonitorCommand ?? (_menuViewsMonitorCommand = new RelayCommand(OnMenuViewsMonitor));
+    public ICommand MenuViewsMonitorCommand => _menuViewsMonitorCommand ??= new RelayCommand(OnMenuViewsMonitor);
 
     private void OnMenuViewsMonitor()
         => _navigationService.NavigateTo(typeof(MonitorViewModel).FullName, null, true);
+
+    public ICommand MenuViewsScreenCaptureCommand => _menuViewsScreenCaptureCommand ??= new RelayCommand(OnMenuViewsScreenCapture);
+
+    private void OnMenuViewsScreenCapture()
+        => _navigationService.NavigateTo(typeof(ScreenCaptureViewModel).FullName, null, true);
+
+    //protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    //{
+    //    base.OnPropertyChanged(e);
+
+    //    WindowsPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(e.PropertyName));
+    //}
 }

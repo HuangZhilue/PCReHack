@@ -21,6 +21,7 @@ public class PageService : IPageService
         Configure<BlankViewModel, BlankPage>();
         Configure<InRangeViewModel, InRangePage>();
         Configure<MonitorViewModel, MonitorPage>();
+        Configure<ScreenCaptureViewModel, ScreenCapturePage>();
     }
 
     public Type GetPageType(string key)

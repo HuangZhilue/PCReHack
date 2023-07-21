@@ -17,17 +17,17 @@ namespace CV_ViewTool.ViewModels;
 
 public class InRangeViewModel : ObservableObject, INavigationAware
 {
-    private string title = "阈值测试";
-    private string profileName = string.Empty;
-    private bool useInRange;
-    private BitmapSource bitmapSource;
-    private Bitmap bitmap1;
-    private BitmapSource bitmapSource2;
-    private Bitmap bitmap2;
-    private int threshold = 125;
-    private int maxBinary = 255;
-    private ColorState colorState = new();
-    private ColorState colorState2 = new();
+    private string _title = "阈值测试";
+    private string _profileName = string.Empty;
+    private bool _useInRange;
+    private BitmapSource _bitmapSource;
+    private Bitmap _bitmap1;
+    private BitmapSource _bitmapSource2;
+    private Bitmap _bitmap2;
+    private int _threshold = 125;
+    private int _maxBinary = 255;
+    private ColorState _colorState = new();
+    private ColorState _colorState2 = new();
     //private int width = 800;
     //private int height = 450;
     //private int maxWidth = 800;
@@ -35,21 +35,21 @@ public class InRangeViewModel : ObservableObject, INavigationAware
     //private int minWidth = 100;
     //private int minHeight = 100;
     //private bool isMinSize = false;
-    private ICommand getImageCommand;
-    private ICommand imageProcessingCommand;
-    private ICommand saveCommand;
+    private ICommand _getImageCommand;
+    private ICommand _imageProcessingCommand;
+    private ICommand _saveCommand;
 
-    public string Title { get => title; set => SetProperty(ref title, value); }
-    public string ProfileName { get => profileName; set => SetProperty(ref profileName, value); }
-    public bool UseInRange { get => useInRange; set => SetProperty(ref useInRange, value); }
-    public BitmapSource BitmapSource { get => bitmapSource; set => SetProperty(ref bitmapSource, value); }
-    public Bitmap Bitmap1 { get => bitmap1; set => SetProperty(ref bitmap1, value); }
-    public BitmapSource BitmapSource2 { get => bitmapSource2; set => SetProperty(ref bitmapSource2, value); }
-    public Bitmap Bitmap2 { get => bitmap2; set => SetProperty(ref bitmap2, value); }
-    public int Threshold { get => threshold; set => SetProperty(ref threshold, value); }
-    public int MaxBinary { get => maxBinary; set => SetProperty(ref maxBinary, value); }
-    public ColorState ColorState { get => colorState; set => SetProperty(ref colorState, value); }
-    public ColorState ColorState2 { get => colorState2; set => SetProperty(ref colorState2, value); }
+    public string Title { get => _title; set => SetProperty(ref _title, value); }
+    public string ProfileName { get => _profileName; set => SetProperty(ref _profileName, value); }
+    public bool UseInRange { get => _useInRange; set => SetProperty(ref _useInRange, value); }
+    public BitmapSource BitmapSource { get => _bitmapSource; set => SetProperty(ref _bitmapSource, value); }
+    public Bitmap Bitmap1 { get => _bitmap1; set => SetProperty(ref _bitmap1, value); }
+    public BitmapSource BitmapSource2 { get => _bitmapSource2; set => SetProperty(ref _bitmapSource2, value); }
+    public Bitmap Bitmap2 { get => _bitmap2; set => SetProperty(ref _bitmap2, value); }
+    public int Threshold { get => _threshold; set => SetProperty(ref _threshold, value); }
+    public int MaxBinary { get => _maxBinary; set => SetProperty(ref _maxBinary, value); }
+    public ColorState ColorState { get => _colorState; set => SetProperty(ref _colorState, value); }
+    public ColorState ColorState2 { get => _colorState2; set => SetProperty(ref _colorState2, value); }
     //public int Width { get => width; set => SetProperty(ref width, value); }
     //public int Height { get => height; set => SetProperty(ref height, value); }
     //public int MaxWidth { get => maxWidth; set => SetProperty(ref maxWidth, value); }
@@ -58,9 +58,9 @@ public class InRangeViewModel : ObservableObject, INavigationAware
     //public int MinHeight { get => minHeight; set => SetProperty(ref minHeight, value); }
     //public bool IsMinSize { get => isMinSize; set => SetProperty(ref isMinSize, value); }
 
-    public ICommand GetImageCommand => getImageCommand??=new RelayCommand(GetImage);
-    public ICommand ImageProcessingCommand => imageProcessingCommand??=new RelayCommand(ImageProcessing);
-    public ICommand SaveCommand => saveCommand??=new RelayCommand(Save);
+    public ICommand GetImageCommand => _getImageCommand??=new RelayCommand(GetImage);
+    public ICommand ImageProcessingCommand => _imageProcessingCommand??=new RelayCommand(ImageProcessing);
+    public ICommand SaveCommand => _saveCommand??=new RelayCommand(Save);
 
     private Queue<Action> Queue { get; } = new();
     private object IsImageProcessing { get; } = new();
@@ -74,18 +74,22 @@ public class InRangeViewModel : ObservableObject, INavigationAware
 
     public void OnNavigatedTo(object parameter)
     {
-        if (parameter is not string) return;
-        ProfileName = parameter.ToString();
-        string profileList = App.Current.Properties["ProfileList"]?.ToString() ?? "";
-        List<CVProfile> profiles = JsonConvert.DeserializeObject<List<CVProfile>>(profileList) ?? new();
-        if (profiles.FirstOrDefault(p => p.ProfileName.ToUpper() == ProfileName.ToUpper()) is not CVProfile profile)
-            return;
+        if (parameter is not Dictionary<string, object> dic) return;
 
-        Threshold = profile.Threshold;
-        MaxBinary = profile.MaxBinary;
-        ColorState = profile.ColorState;
-        ColorState2 = profile.ColorState2;
-        UseInRange = profile.UseInRange;
+        if (dic.ContainsKey("ProfileName") && dic["ProfileName"] is string profileName)
+        {
+            ProfileName = profileName;
+            string profileList = App.Current.Properties["ProfileList"]?.ToString() ?? "";
+            List<CVProfile> profiles = JsonConvert.DeserializeObject<List<CVProfile>>(profileList) ?? new();
+            if (profiles.FirstOrDefault(p => p.ProfileName.ToUpper() == ProfileName.ToUpper()) is not CVProfile profile)
+                return;
+
+            Threshold = profile.Threshold;
+            MaxBinary = profile.MaxBinary;
+            ColorState = profile.ColorState;
+            ColorState2 = profile.ColorState2;
+            UseInRange = profile.UseInRange;
+        }
     }
 
     public void OnNavigatedFrom()

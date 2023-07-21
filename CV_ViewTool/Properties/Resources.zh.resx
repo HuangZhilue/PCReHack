@@ -183,4 +183,7 @@
   <data name="InRangePageTitle" xml:space="preserve">
     <value>InRange</value>
   </data>
+  <data name="MainPageButtonOpenNewScreenCaptureWindow" xml:space="preserve">
+    <value>打开新的截图窗口</value>
+  </data>
 </root>
