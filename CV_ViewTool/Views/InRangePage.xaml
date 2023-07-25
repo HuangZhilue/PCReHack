@@ -221,6 +221,15 @@
                                 </i:Interaction.Triggers>
                             </Button>
                         </StackPanel>
+                        <StackPanel Margin="{StaticResource SmallTopMargin}" Orientation="Horizontal">
+                            <Button Content="Save Sample Image" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:InvokeCommandAction Command="{Binding SaveSampleImageCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
                 <Grid Grid.Row="0" Grid.Column="2">
@@ -228,7 +237,7 @@
                         MinWidth="100"
                         MinHeight="100"
                         Margin="10"
-                        Source="{Binding BitmapSource}"
+                        Source="{Binding OriginalImage}"
                         Stretch="Uniform" />
                 </Grid>
 
@@ -237,7 +246,7 @@
                         MinWidth="100"
                         MinHeight="100"
                         Margin="10"
-                        Source="{Binding BitmapSource2}"
+                        Source="{Binding ProcessedImage}"
                         Stretch="Uniform" />
                 </Grid>
 

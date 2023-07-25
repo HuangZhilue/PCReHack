@@ -7,7 +7,6 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:CV_ViewTool.Properties"
-    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:viewmodels="clr-namespace:CV_ViewTool.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:MonitorViewModel}"
     d:DesignHeight="450"
@@ -18,6 +17,7 @@
         <Converters:ColorStateToStringConverter x:Key="ColorStateToStringConverter" />
         <Converters:GreaterThanConverter x:Key="GreaterThanConverter" />
         <Converters:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
+        <Converters:GreaterThanAndLessThanConverter x:Key="GreaterThanAndLessThanConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -46,6 +46,7 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -57,7 +58,17 @@
                     Source="{Binding OriginalImage}"
                     Stretch="Uniform" />
                 <Image
+                    x:Name="SampleImage"
                     Grid.Column="1"
+                    MinWidth="100"
+                    MinHeight="100"
+                    Margin="{StaticResource SmallLeftTopRightBottomMargin}"
+                    d:Source="/Views/微信图片_20230718191039.png"
+                    d:Visibility="Visible"
+                    Source="{Binding SampleImage}"
+                    Stretch="Uniform" />
+                <Image
+                    Grid.Column="2"
                     MinWidth="100"
                     MinHeight="100"
                     Margin="{StaticResource SmallLeftTopRightBottomMargin}"
@@ -174,6 +185,18 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ComboBox>
+
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="工作模式:" />
+                        <ComboBox
+                            x:Name="ComboBox4WordMode"
+                            MinWidth="120"
+                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type StackPanel}}}"
+                            d:SelectedIndex="1"
+                            SelectedIndex="{Binding ModeIndex}">
+                            <ComboBoxItem Content="白色比例计算" />
+                            <ComboBoxItem Content="直方图计算" />
+                            <ComboBoxItem Content="模板匹配" />
+                        </ComboBox>
                         <Label Margin="{StaticResource SmallLeftMargin}" Content="FPS:" />
                         <TextBlock
                             Margin="{StaticResource XSmallLeftMargin}"
@@ -182,17 +205,124 @@
                             Style="{StaticResource BodyTextStyle}"
                             Text="{Binding FPS}" />
                     </WrapPanel>
+                    <WrapPanel
+                        x:Name="WrapPanel0"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger
+                                Binding="{Binding ElementName=ComboBox4WordMode, Path=SelectedIndex}"
+                                Comparison="Equal"
+                                Value="0">
+                                <i:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </i:DataTrigger>
+                            <i:DataTrigger
+                                Binding="{Binding ElementName=ComboBox4WordMode, Path=SelectedIndex}"
+                                Comparison="NotEqual"
+                                Value="0">
+                                <i:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="预期白色占比值:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding WhiteRatio}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="容差:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding Tolerance}" />
+                    </WrapPanel>
+                    <WrapPanel
+                        x:Name="WrapPanel1"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger
+                                Binding="{Binding ElementName=ComboBox4WordMode, Path=SelectedIndex}"
+                                Comparison="Equal"
+                                Value="1">
+                                <i:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </i:DataTrigger>
+                            <i:DataTrigger
+                                Binding="{Binding ElementName=ComboBox4WordMode, Path=SelectedIndex}"
+                                Comparison="NotEqual"
+                                Value="1">
+                                <i:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+                        <Button
+                            Margin="{StaticResource SmallLeftMargin}"
+                            Command="{Binding SetSampleImageCommand}"
+                            Content="Select Sample Image"
+                            Style="{StaticResource MahApps.Styles.Button.MetroSquare}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="预期直方图计算值:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding WhiteRatio}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="容差:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding Tolerance}" />
+                    </WrapPanel>
+                    <WrapPanel
+                        x:Name="WrapPanel2"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger
+                                Binding="{Binding ElementName=ComboBox4WordMode, Path=SelectedIndex}"
+                                Comparison="Equal"
+                                Value="2">
+                                <i:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </i:DataTrigger>
+                            <i:DataTrigger
+                                Binding="{Binding ElementName=ComboBox4WordMode, Path=SelectedIndex}"
+                                Comparison="NotEqual"
+                                Value="2">
+                                <i:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+                        <Button
+                            Margin="{StaticResource SmallLeftMargin}"
+                            Command="{Binding SetSampleImageCommand}"
+                            Content="Select Sample Image"
+                            Style="{StaticResource MahApps.Styles.Button.MetroSquare}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="预期模板匹配值:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding WhiteRatio}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="容差:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding Tolerance}" />
+                    </WrapPanel>
                 </StackPanel>
             </StackPanel>
             <ScrollViewer
                 Grid.Row="3"
+                Margin="{StaticResource SmallLeftTopRightBottomMargin}"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Auto">
                 <ListView ItemsSource="{Binding ProbabilityList}">
                     <ListView.ItemContainerStyle>
                         <Style BasedOn="{StaticResource MahApps.Styles.ListViewItem}" TargetType="ListViewItem">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Percentage, ConverterParameter=80, Converter={StaticResource GreaterThanConverter}, Mode=OneWay}" Value="True">
+                                <DataTrigger Binding="{Binding Percentage, Converter={StaticResource GreaterThanAndLessThanConverter}, Mode=OneWay}" Value="False">
+                                    <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Badged.Foreground.Disabled}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Percentage, Converter={StaticResource GreaterThanAndLessThanConverter}, Mode=OneWay}" Value="True">
                                     <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}" />
                                 </DataTrigger>
                             </Style.Triggers>

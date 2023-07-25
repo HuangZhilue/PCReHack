@@ -3,11 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CV_ViewTool.Contracts.Services;
 using CV_ViewTool.Contracts.ViewModels;
+using CV_ViewTool.Converters;
 using CV_ViewTool.Helpers;
 using CV_ViewTool.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -29,12 +32,17 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     private bool _useInRange;
     private BitmapImage _originalImage;
     private BitmapImage _processedImage;
+    private BitmapImage _sampleImage;
     private int _threshold = 125;
     private int _maxBinary = 255;
     private int _fps = 0;
+    private int _modeIndex = 0;
+    private double _whiteRatio = 25;
+    private double _tolerance = 6;
     private ColorState _colorState = new();
     private ColorState _colorState2 = new();
     private ICommand _showImageCommand;
+    private ICommand _setSampleImageCommand;
     private ICommand _setCameraCommand;
     private ICommand _initCameraListCommand;
 
@@ -43,44 +51,64 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     public bool UseInRange { get => _useInRange; set => SetProperty(ref _useInRange, value); }
     public BitmapImage OriginalImage { get => _originalImage; set => SetProperty(ref _originalImage, value); }
     public BitmapImage ProcessedImage { get => _processedImage; set => SetProperty(ref _processedImage, value); }
+    public BitmapImage SampleImage { get => _sampleImage; set => SetProperty(ref _sampleImage, value); }
     public int Threshold { get => _threshold; set => SetProperty(ref _threshold, value); }
     public int MaxBinary { get => _maxBinary; set => SetProperty(ref _maxBinary, value); }
     public int FPS { get => _fps; set => SetProperty(ref _fps, value); }
+    public int ModeIndex { get => _modeIndex; set => SetProperty(ref _modeIndex, value); }
+    public double WhiteRatio
+    {
+        get => _whiteRatio; set
+        {
+            GreaterThanAndLessThanConverter.DefaultCompareValue = value;
+            SetProperty(ref _whiteRatio, value);
+        }
+    }
+    public double Tolerance
+    {
+        get => _tolerance; set
+        {
+            GreaterThanAndLessThanConverter.DefaultToleranceValue = value;
+            SetProperty(ref _tolerance, value);
+        }
+    }
     public ColorState ColorState { get => _colorState; set => SetProperty(ref _colorState, value); }
     public ColorState ColorState2 { get => _colorState2; set => SetProperty(ref _colorState2, value); }
     public ObservableCollection<string> CameraNameList { get; } = new();
     public ObservableCollection<PercentageRecord> ProbabilityList { get; } = new();
 
     public ICommand ShowImageCommand => _showImageCommand??=new RelayCommand(() => { EnableImage = !EnableImage; });
+    public ICommand SetSampleImageCommand => _setSampleImageCommand??=new RelayCommand(SetSampleImage);
     public ICommand SetCameraCommand => _setCameraCommand??=new RelayCommand<int>(SetCamera);
     public ICommand InitCameraListCommand => _initCameraListCommand ??=new RelayCommand(InitCameraList);
 
     private Queue<Action> Queue { get; } = new();
     private object IsImageProcessing { get; } = new();
     private IAppState AppState { get; }
+    private Mat FixedImage { get; set; } = new();
 
     public MonitorViewModel(IServiceProvider service)
     {
         AppState = service.GetRequiredService<IAppState>();
 
-        Task.Run(async () =>
-        {
-            while (true)
-            {
-                DateTime dateTime = DateTime.Now;
-                double percentage = Random.Shared.NextDouble() * 100;
-                App.Current.Dispatcher.Invoke(() =>
-                {
-                    while (ProbabilityList.Count >= 10)
-                    {
-                        ProbabilityList.RemoveAt(ProbabilityList.Count-1);
-                    }
-                    ProbabilityList.Insert(0, new() { DateTime =  dateTime, Percentage = percentage });
-                });
+        //Task.Run(async () =>
+        //{
+        //    while (true)
+        //    {
+        //        DateTime dateTime = DateTime.Now;
+        //        double percentage = Random.Shared.NextDouble() * 100;
+        //        App.Current.Dispatcher.Invoke(() =>
+        //        {
+        //            while (ProbabilityList.Count >= 10)
+        //            {
+        //                ProbabilityList.RemoveAt(ProbabilityList.Count-1);
+        //            }
+        //            ProbabilityList.Insert(0, new() { DateTime =  dateTime, Percentage = percentage });
+        //        });
 
-                await Task.Delay(1000).ConfigureAwait(false);
-            }
-        });
+        //        await Task.Delay(1000).ConfigureAwait(false);
+        //    }
+        //});
     }
 
     public void OnNavigatedTo(object parameter)
@@ -119,6 +147,35 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     public void OnNavigatedFrom()
     {
         //throw new NotImplementedException();
+    }
+
+    private void SetSampleImage()
+    {
+        OpenFileDialog dlg = new()
+        {
+            // Set filter for file extension and default file extension 
+            DefaultExt = ".png",
+            Filter = "Image Files|*.jpeg;*.png;*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg"
+        };
+
+        // Display OpenFileDialog by calling ShowDialog method 
+        bool? result = dlg.ShowDialog();
+
+        // Get the selected file name and display in a TextBox 
+        if (result != true) return;
+        // Open document 
+        string filename = dlg.FileName;
+
+        var sampleBitmap = new Bitmap(filename);
+        SampleImage = sampleBitmap.BitmapToBitmapImage();
+
+        // 读取图像
+        Mat image = Cv2.ImRead(filename, ImreadModes.AnyColor);
+
+        // 将图像转换为灰度图像
+        Cv2.CvtColor(image, FixedImage, ColorConversionCodes.BGR2GRAY);
+        // 释放图像
+        image.Release();
     }
 
     private void SetCamera(int cameraIndex)
@@ -160,12 +217,12 @@ public class MonitorViewModel : ObservableObject, INavigationAware
             try
             {
                 Bitmap bitmap2 = null;
-                using Mat image = OpenCvSharp.Extensions.BitmapConverter.ToMat(bitmap);
+                using Mat image = BitmapConverter.ToMat(bitmap);
                 if (!UseInRange)
                 {
                     Cv2.CvtColor(image, image, ColorConversionCodes.BGR2GRAY);
                     Cv2.Threshold(image, image, Threshold, MaxBinary, ThresholdTypes.Binary);
-                    bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
+                    bitmap2 = BitmapConverter.ToBitmap(image);
                 }
                 else
                 {
@@ -175,15 +232,38 @@ public class MonitorViewModel : ObservableObject, INavigationAware
                             new Scalar(ColorState.HSV_H / 2, ColorState.HSV_S * 255, ColorState.HSV_V * 255),
                             new Scalar(ColorState2.HSV_H / 2, ColorState2.HSV_S * 255, ColorState2.HSV_V * 255),
                             image);
-                    bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
+                    bitmap2 = BitmapConverter.ToBitmap(image);
                 }
 
                 if (bitmap2 is not null)
                 {
-                    //App.Current.Dispatcher.Invoke(() =>
-                    //{
                     ProcessedImage = bitmap2.BitmapToBitmapImage();
-                    //});
+
+                    DateTime dateTime = DateTime.Now;
+                    double percentage = 0;
+
+                    if (ModeIndex==0)
+                    {
+                        percentage = CalculateWhiteRatio(bitmap2);
+                    }
+                    else if (ModeIndex==1 && SampleImage is not null)
+                    {
+                        percentage = CalculateSimilarity(FixedImage, bitmap2);
+                    }
+                    else if (ModeIndex==2 && SampleImage is not null)
+                    {
+                        percentage = CalculateSimilarityByHist(FixedImage, bitmap2);
+                    }
+
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        while (ProbabilityList.Count >= 10)
+                        {
+                            ProbabilityList.RemoveAt(ProbabilityList.Count - 1);
+                        }
+
+                        ProbabilityList.Insert(0, new() { DateTime =  dateTime, Percentage = percentage });
+                    });
                 }
             }
             catch (Exception ex)
@@ -203,5 +283,75 @@ public class MonitorViewModel : ObservableObject, INavigationAware
                 Queue.Dequeue().Invoke();
             }
         }
+    }
+
+    private static double CalculateWhiteRatio(Bitmap liveImage)
+    {
+        // 读取黑白图像
+        Mat image = liveImage.ToMat();
+
+        // 统计白色像素数量
+        int whitePixelCount = 0;
+        int totalPixelCount = image.Rows * image.Cols;
+
+        for (int y = 0; y < image.Rows; y++)
+        {
+            for (int x = 0; x < image.Cols; x++)
+            {
+                Vec3b pixelValue = image.Get<Vec3b>(y, x);
+                if (pixelValue.Item0 == 255) // 假设255表示白色
+                {
+                    whitePixelCount++;
+                }
+            }
+        }
+
+        // 计算白色占比
+        double whiteRatio = (double)whitePixelCount / totalPixelCount;
+
+        return whiteRatio;
+    }
+
+    private static double CalculateSimilarity(Mat fixedImage, Bitmap liveImage)
+    {
+        Mat liveImageMat = liveImage.ToMat();
+
+        // 进行模板匹配
+        Mat result = new();
+        Cv2.MatchTemplate(liveImageMat, fixedImage, result, TemplateMatchModes.CCorrNormed);
+
+        // 获取匹配结果的最大值
+        Cv2.MinMaxLoc(result, out _, out double maxVal, out _, out _);
+
+        // 设置阈值，筛选出匹配程度高于阈值的区域
+        //double threshold = 0.8;
+        //Mat thresholdResult = new ();
+        //Cv2.Threshold(result, thresholdResult, threshold, 1.0, ThresholdTypes.Binary);
+
+        //// 计算概率
+        //double probability = Cv2.CountNonZero(thresholdResult) / (double)result.Total();
+
+        //// 打印匹配结果
+        //Console.WriteLine("最佳匹配相似度: " + maxVal);
+        //return probability;
+        return maxVal;
+    }
+
+    private static double CalculateSimilarityByHist(Mat fixedImage, Bitmap liveImage)
+    {
+        Mat liveImageMat = liveImage.ToMat();
+
+        // 计算图像1的直方图
+        Mat hist1 = new();
+        Cv2.CalcHist(new[] { fixedImage }, new int[] { 0 }, null, hist1, 1, new[] { 256 }, new Rangef[] { new Rangef(0, 256) });
+
+        // 计算图像2的直方图
+        Mat hist2 = new();
+        Cv2.CalcHist(new[] { liveImageMat }, new int[] { 0 }, null, hist2, 1, new[] { 256 }, new Rangef[] { new Rangef(0, 256) });
+
+        // 比较两张图像的直方图   Hellinger / Bhattacharyya
+        double similarity = Cv2.CompareHist(hist1, hist2, HistCompMethods.Bhattacharyya);
+
+        return similarity;
     }
 }

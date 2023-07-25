@@ -108,26 +108,40 @@ public class ScreenCaptureViewModel : ObservableObject, INavigationAware
         string monitorName = typeof(MonitorViewModel).FullName;
         var dic = new Dictionary<string, object>() { { "ScreenShut", null }, { "FPS", 0 } };
         double fps = 0;
-                
+
+        Rectangle bounds = new(
+        Left,
+        Top + TitleBarHeight,
+        Width,
+        Height - TitleBarHeight);
+        Bitmap bitmap = new(bounds.Width, bounds.Height);
+
+        int currentWidth = Width;
+        int currentHeight = Height;
+        int currentTop = Top;
+        int currentLeft = Left;
+        int currentTitleBarHeight = TitleBarHeight;
+
         while (IsStart)
         {
-            Rectangle bounds = new(
-            Left,
-            Top + TitleBarHeight,
-            Width,
-            Height - TitleBarHeight);
-            using Bitmap bitmap = new(bounds.Width, bounds.Height);
-
             using Graphics g = Graphics.FromImage(bitmap);
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //App.Current.Dispatcher.Invoke(() =>
             //{
             dic["ScreenShut"] = bitmap;
             dic["FPS"] = fps;
-            MonitorNavigationAwareList.ForEach((navigationAware) =>
+            try
             {
-                navigationAware?.OnNavigatedTo(dic);
-            });
+                MonitorNavigationAwareList?.ForEach((navigationAware) =>
+                {
+                    navigationAware?.OnNavigatedTo(dic);
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                // ignore
+            }
             //});
             // 增加截图计数
             ScreenshotCount++;
@@ -137,7 +151,6 @@ public class ScreenCaptureViewModel : ObservableObject, INavigationAware
 
             if (elapsedTime.TotalMilliseconds > 1000)
             {
-
                 // 计算截图频率
                 fps = (ScreenshotCount / elapsedTime.TotalMilliseconds) * 1000;
 
@@ -146,9 +159,28 @@ public class ScreenCaptureViewModel : ObservableObject, INavigationAware
                 StartTime = DateTime.Now;
                 ScreenshotCount=0;
             }
+
+            // 检查 Width 和 Height 是否发生变化
+            if (currentWidth != Width
+                || currentHeight != Height
+                || currentTitleBarHeight != TitleBarHeight
+                || currentTop != Top
+                || currentLeft != Left)
+            {
+                // 更新 bounds 的值
+                bounds.X = Left;
+                bounds.Y = Top + TitleBarHeight;
+                bounds.Width = Width;
+                bounds.Height = Height - TitleBarHeight;
+                // 重新创建 bitmap 对象
+                bitmap.Dispose();
+                bitmap = new(bounds.Width, bounds.Height);
+            }
+
             // 等待一定时间间隔
             await Task.Delay(TimeSpan.FromMilliseconds(0));
         }
-        
+
+        bitmap.Dispose();
     }
 }

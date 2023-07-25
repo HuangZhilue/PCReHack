@@ -13,6 +13,7 @@
     MinHeight="350"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ShellViewModel}"
+    SaveWindowPosition="True"
     Style="{StaticResource CustomMetroWindow}"
     mc:Ignorable="d">
     <i:Interaction.Triggers>

@@ -6,11 +6,15 @@ using CV_ViewTool.Contracts.ViewModels;
 using CV_ViewTool.Helpers;
 using CV_ViewTool.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using System.Collections;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using BitmapSource = System.Windows.Media.Imaging.BitmapSource;
 
 namespace CV_ViewTool.ViewModels;
@@ -20,9 +24,9 @@ public class InRangeViewModel : ObservableObject, INavigationAware
     private string _title = "阈值测试";
     private string _profileName = string.Empty;
     private bool _useInRange;
-    private BitmapSource _bitmapSource;
+    private BitmapImage _originalImage;
+    private BitmapImage _processedImage;
     private Bitmap _bitmap1;
-    private BitmapSource _bitmapSource2;
     private Bitmap _bitmap2;
     private int _threshold = 125;
     private int _maxBinary = 255;
@@ -38,14 +42,15 @@ public class InRangeViewModel : ObservableObject, INavigationAware
     private ICommand _getImageCommand;
     private ICommand _imageProcessingCommand;
     private ICommand _saveCommand;
+    private ICommand _saveSampleImageCommand;
 
     public string Title { get => _title; set => SetProperty(ref _title, value); }
     public string ProfileName { get => _profileName; set => SetProperty(ref _profileName, value); }
     public bool UseInRange { get => _useInRange; set => SetProperty(ref _useInRange, value); }
-    public BitmapSource BitmapSource { get => _bitmapSource; set => SetProperty(ref _bitmapSource, value); }
     public Bitmap Bitmap1 { get => _bitmap1; set => SetProperty(ref _bitmap1, value); }
-    public BitmapSource BitmapSource2 { get => _bitmapSource2; set => SetProperty(ref _bitmapSource2, value); }
     public Bitmap Bitmap2 { get => _bitmap2; set => SetProperty(ref _bitmap2, value); }
+    public BitmapImage OriginalImage { get => _originalImage; set => SetProperty(ref _originalImage, value); }
+    public BitmapImage ProcessedImage { get => _processedImage; set => SetProperty(ref _processedImage, value); }
     public int Threshold { get => _threshold; set => SetProperty(ref _threshold, value); }
     public int MaxBinary { get => _maxBinary; set => SetProperty(ref _maxBinary, value); }
     public ColorState ColorState { get => _colorState; set => SetProperty(ref _colorState, value); }
@@ -61,6 +66,7 @@ public class InRangeViewModel : ObservableObject, INavigationAware
     public ICommand GetImageCommand => _getImageCommand??=new RelayCommand(GetImage);
     public ICommand ImageProcessingCommand => _imageProcessingCommand??=new RelayCommand(ImageProcessing);
     public ICommand SaveCommand => _saveCommand??=new RelayCommand(Save);
+    public ICommand SaveSampleImageCommand => _saveSampleImageCommand??=new RelayCommand(SaveSampleImage);
 
     private Queue<Action> Queue { get; } = new();
     private object IsImageProcessing { get; } = new();
@@ -99,7 +105,7 @@ public class InRangeViewModel : ObservableObject, INavigationAware
 
     private void GetImage()
     {
-        Microsoft.Win32.OpenFileDialog dlg = new()
+        OpenFileDialog dlg = new()
         {
             // Set filter for file extension and default file extension 
             DefaultExt = ".png",
@@ -116,12 +122,12 @@ public class InRangeViewModel : ObservableObject, INavigationAware
 
         var bitmap = new Bitmap(filename);
         Bitmap1 = bitmap;
-        BitmapSource = bitmap.BitmapToBitmapSource();
+        OriginalImage = bitmap.BitmapToBitmapImage();
     }
 
     private void ImageProcessing()
     {
-        if (BitmapSource is null || Bitmap1 is null) return;
+        if (Bitmap1 is null) return;
 
         Queue.Enqueue((() =>
         {
@@ -147,7 +153,7 @@ public class InRangeViewModel : ObservableObject, INavigationAware
             {
                 App.Current.Dispatcher.Invoke(() =>
                 {
-                    BitmapSource2 = Bitmap2.BitmapToBitmapSource();
+                    ProcessedImage = Bitmap2.BitmapToBitmapImage();
                 });
             }
         }));
@@ -191,5 +197,26 @@ public class InRangeViewModel : ObservableObject, INavigationAware
         App.Current.Properties["ProfileList"] = JsonConvert.SerializeObject(profiles);
 
         ToastNotificationsService.ShowToastNotification("Success", "Saved!");
+    }
+
+    private void SaveSampleImage()
+    {
+        // 创建一个SaveFileDialog实例
+        SaveFileDialog saveFileDialog = new()
+        {
+            AddExtension = true,
+            FileName = "CV_ViewTool_Sample_" + DateTime.Now.ToString("HHmmss"),
+            Filter = "PNG 图片文件 (*.png)|*.png"
+        };
+
+        // 打开文件保存对话框
+        bool? result = saveFileDialog.ShowDialog();
+
+        // 如果用户点击了保存按钮
+        if (result == true)
+        {
+            // 获取用户选择的文件路径
+            Bitmap2.Save(saveFileDialog.FileName, ImageFormat.Png);
+        }
     }
 }
