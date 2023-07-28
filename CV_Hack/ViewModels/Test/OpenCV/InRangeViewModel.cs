@@ -6,7 +6,6 @@ using StyletIoC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using BitmapSource = System.Windows.Media.Imaging.BitmapSource;
 
@@ -16,25 +15,21 @@ public class InRangeViewModel : Screen
 {
     public string Title { get; set; } = "阈值测试";
     public bool UseInRange { get; set; }
-    public int SelectedTabIndex { get; set; }
     public BitmapSource BitmapSource { get; set; }
     public Bitmap Bitmap1 { get; set; }
     public BitmapSource BitmapSource2 { get; set; }
     public Bitmap Bitmap2 { get; set; }
-
     public int Threshold { get; set; } = 125;
     public int MaxBinary { get; set; } = 255;
-
     public ColorState ColorState { get; set; } = new();
     public ColorState ColorState2 { get; set; } = new();
-    //#region RGB
-    //public double ColorR1 { get; set; } = 125;
-    //public double ColorG1 { get; set; } = 125;
-    //public double ColorB1 { get; set; } = 125;
-    //public double ColorR2 { get; set; } = 125;
-    //public double ColorG2 { get; set; } = 125;
-    //public double ColorB2 { get; set; } = 125;
-    //#endregion
+    public int Width { get; set; } = 800;
+    public int Height { get; set; } = 450;
+    public int MaxWidth { get; set; } = 800;
+    public int MaxHeight { get; set; } = 450;
+    public int MinWidth { get; set; } = 100;
+    public int MinHeight { get; set; } = 100;
+    public bool IsMinSize { get; set; } = false;
 
     private IWindowManager WindowManager { get; }
     private IContainer Container { get; }
@@ -73,7 +68,6 @@ public class InRangeViewModel : Screen
 
     public void ImageProcessing()
     {
-        //Debug.WriteLine($"RGBTb:{ColorR1}\t{ColorG1}\t{ColorB1}\t{Threshold}\t{MaxBinary}");
         if (BitmapSource is not null && Bitmap1 is not null)
         {
             Queue.Enqueue((() =>
@@ -81,7 +75,6 @@ public class InRangeViewModel : Screen
                 using Mat image = OpenCvSharp.Extensions.BitmapConverter.ToMat(Bitmap1);
                 if (!UseInRange)
                 {
-                    //using Mat resultImage = new();
                     Cv2.CvtColor(image, image, ColorConversionCodes.BGR2GRAY);
                     Cv2.Threshold(image, image, Threshold, MaxBinary, ThresholdTypes.Binary);
                     Bitmap2 = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
@@ -115,7 +108,6 @@ public class InRangeViewModel : Screen
         {
             while (Queue.Count > 0)
             {
-                //Debug.WriteLine("IsImageProcessing...");
                 Queue.Dequeue().Invoke();
             }
         }

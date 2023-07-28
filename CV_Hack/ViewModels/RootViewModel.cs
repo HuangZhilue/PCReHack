@@ -1,4 +1,5 @@
 ﻿using CV_Hack.Helper.WinAPI;
+using CV_Hack.ViewModels.Test.OpenCV;
 using HandyControl.Tools;
 using Stylet;
 using System;
@@ -34,10 +35,16 @@ public class RootViewModel : Screen
     {
         WindowManager = windowManager;
         Container = container;
-        //WindowManager.ShowWindow(new TestViewModel(windowManager, container));
         InitializeTouchInjection();
         SetUpHook();
     }
+
+    public void AddSimple()
+    {
+        WindowManager.ShowWindow(new InRangeViewModel(WindowManager, Container));
+    }
+
+    #region 鼠标监控、模拟触屏
 
     private void SetUpHook()
     {
@@ -108,7 +115,7 @@ public class RootViewModel : Screen
                 case MouseMessage.WM_LBUTTONUP:
                     {
                         if (hookData.pt.x + 1 == LastX && hookData.pt.y + 1 == LastY) { break; }
-                        Debug.WriteLine("Left Mouse up\tX:{hookData.pt.x}\tY:{hookData.pt.y}");
+                        Debug.WriteLine($"Left Mouse up\tX:{hookData.pt.x}\tY:{hookData.pt.y}");
                         LastMouseMessage = wParam1;
                         SimulateTouch("Up", hookData.pt.x - 1, hookData.pt.y - 1, 1);
                         LastX = hookData.pt.x;
@@ -119,6 +126,7 @@ public class RootViewModel : Screen
                     {
                         if (LastMouseMessage == MouseMessage.WM_LBUTTONDOWN)
                         {
+                            //LastMouseMessage = wParam1;
                             SimulateTouch("Move", hookData.pt.x - LastX, hookData.pt.y - LastY, 1);
 
                             LastX = hookData.pt.x;
@@ -174,7 +182,7 @@ public class RootViewModel : Screen
             case "HOLD":
                 {
                     // Touch Up Simulate
-                    Debug.WriteLine("Touch Up Simulate");
+                    Debug.WriteLine("Touch Hold Simulate");
                     Debug.WriteLine("========================================");
                     Contact.PointerInfo.PointerFlags = PointerFlags.UPDATE | PointerFlags.INRANGE | PointerFlags.INCONTACT;
                     break;
@@ -209,6 +217,8 @@ public class RootViewModel : Screen
         contact.ContactArea.bottom = y + radius;
         return contact;
     }
+
+    #endregion
 
     protected override void OnClose()
     {

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CV_ViewTool.Contracts.Services;
 using CV_ViewTool.Contracts.ViewModels;
+using CV_ViewTool.Models;
 using MahApps.Metro.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
@@ -57,23 +58,30 @@ public class ScreenCaptureViewModel : ObservableObject, INavigationAware
             DependencyPropertyDescriptor.FromProperty(MetroWindow.WidthProperty, typeof(MetroWindow)).AddValueChanged(ThisWindow, (sender, e) =>
             {
                 Width = (int)ThisWindow.Width;
+                InitTouchArea();
             });
             DependencyPropertyDescriptor.FromProperty(MetroWindow.HeightProperty, typeof(MetroWindow)).AddValueChanged(ThisWindow, (sender, e) =>
             {
                 Height = (int)ThisWindow.Height;
+                InitTouchArea();
             });
             DependencyPropertyDescriptor.FromProperty(MetroWindow.TopProperty, typeof(MetroWindow)).AddValueChanged(ThisWindow, (sender, e) =>
             {
                 Top = (int)ThisWindow.Top;
+                InitTouchArea();
             });
             DependencyPropertyDescriptor.FromProperty(MetroWindow.LeftProperty, typeof(MetroWindow)).AddValueChanged(ThisWindow, (sender, e) =>
             {
                 Left = (int)ThisWindow.Left;
+                InitTouchArea();
             });
             DependencyPropertyDescriptor.FromProperty(MetroWindow.TitleBarHeightProperty, typeof(MetroWindow)).AddValueChanged(ThisWindow, (sender, e) =>
             {
-                TitleBarHeight = (int)ThisWindow.TitleBarHeight;
+                TitleBarHeight = ThisWindow.TitleBarHeight;
+                InitTouchArea();
             });
+
+            InitTouchArea();
         }
         if (dic.ContainsKey("IsStart") && dic["IsStart"] is bool isStart)
         {
@@ -100,13 +108,22 @@ public class ScreenCaptureViewModel : ObservableObject, INavigationAware
         //throw new NotImplementedException();
     }
 
+    private void InitTouchArea()
+    {
+        Dictionary<string, object> dic = new() { { "InitTouchArea", new ScreenCaptureArea(Left, Top, Height, Width, TitleBarHeight) } };
+        MonitorNavigationAwareList?.ForEach((navigationAware) =>
+        {
+            navigationAware?.OnNavigatedTo(dic);
+        });
+    }
+
     private async void ScreenShut()
     {
         StartTime = DateTime.Now;
         ScreenshotCount = 0;
 
         string monitorName = typeof(MonitorViewModel).FullName;
-        var dic = new Dictionary<string, object>() { { "ScreenShut", null }, { "FPS", 0 } };
+        Dictionary<string, object> dic = new() { { "ScreenShut", null }, { "FPS", 0 } };
         double fps = 0;
 
         Rectangle bounds = new(

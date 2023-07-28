@@ -19,14 +19,10 @@ using System.Windows.Media.Imaging;
 
 namespace CV_ViewTool.ViewModels;
 
-public class PercentageRecord
-{
-    public DateTime DateTime { get; set; }
-    public double Percentage { get; set; }
-}
-
 public class MonitorViewModel : ObservableObject, INavigationAware
 {
+    public readonly record struct PercentageRecord(DateTime DateTime, double Percentage);
+
     private bool _enableImage = true;
     private string _profileName = string.Empty;
     private bool _useInRange;
@@ -37,8 +33,18 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     private int _maxBinary = 255;
     private int _fps = 0;
     private int _modeIndex = 0;
+    /// <summary>
+    /// 预期计算结果（白色占比/色彩直方图计算结果/模板匹配预期）
+    /// </summary>
     private double _whiteRatio = 25;
+    /// <summary>
+    /// 容差
+    /// </summary>
     private double _tolerance = 6;
+    /// <summary>
+    /// 连续匹配的阈值
+    /// </summary>
+    private int _consecutiveMatchesThreshold = 0;
     private ColorState _colorState = new();
     private ColorState _colorState2 = new();
     private ICommand _showImageCommand;
@@ -72,6 +78,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
             SetProperty(ref _tolerance, value);
         }
     }
+    public int ConsecutiveMatchesThreshold { get => _consecutiveMatchesThreshold; set => SetProperty(ref _consecutiveMatchesThreshold, value); }
     public ColorState ColorState { get => _colorState; set => SetProperty(ref _colorState, value); }
     public ColorState ColorState2 { get => _colorState2; set => SetProperty(ref _colorState2, value); }
     public ObservableCollection<string> CameraNameList { get; } = new();
@@ -86,6 +93,8 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     private object IsImageProcessing { get; } = new();
     private IAppState AppState { get; }
     private Mat FixedImage { get; set; } = new();
+    private ScreenCaptureArea ScreenCaptureArea { get; set; } = new();
+    private int ConsecutiveMatchesCount { get; set; } = 0;
 
     public MonitorViewModel(IServiceProvider service)
     {
@@ -142,6 +151,10 @@ public class MonitorViewModel : ObservableObject, INavigationAware
         {
             FPS = (int)fps;
         }
+        if (dic.ContainsKey("InitTouchArea") && dic["InitTouchArea"] is ScreenCaptureArea screenCaptureArea)
+        {
+            ScreenCaptureArea = screenCaptureArea;
+        }
     }
 
     public void OnNavigatedFrom()
@@ -166,7 +179,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
         // Open document 
         string filename = dlg.FileName;
 
-        var sampleBitmap = new Bitmap(filename);
+        Bitmap sampleBitmap = new(filename);
         SampleImage = sampleBitmap.BitmapToBitmapImage();
 
         // 读取图像
@@ -235,35 +248,51 @@ public class MonitorViewModel : ObservableObject, INavigationAware
                     bitmap2 = BitmapConverter.ToBitmap(image);
                 }
 
-                if (bitmap2 is not null)
+                if (bitmap2 is null) return;
+
+                ProcessedImage = bitmap2.BitmapToBitmapImage();
+
+                DateTime dateTime = DateTime.Now;
+                double percentage = 0;
+
+                if (ModeIndex==0)
                 {
-                    ProcessedImage = bitmap2.BitmapToBitmapImage();
+                    percentage = CalculateWhiteRatio(bitmap2);
+                }
+                else if (ModeIndex==1 && SampleImage is not null)
+                {
+                    percentage = CalculateSimilarity(FixedImage, bitmap2);
+                }
+                else if (ModeIndex==2 && SampleImage is not null)
+                {
+                    percentage = CalculateSimilarityByHist(FixedImage, bitmap2);
+                }
 
-                    DateTime dateTime = DateTime.Now;
-                    double percentage = 0;
-
-                    if (ModeIndex==0)
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    while (ProbabilityList.Count >= 10)
                     {
-                        percentage = CalculateWhiteRatio(bitmap2);
+                        ProbabilityList.RemoveAt(ProbabilityList.Count - 1);
                     }
-                    else if (ModeIndex==1 && SampleImage is not null)
-                    {
-                        percentage = CalculateSimilarity(FixedImage, bitmap2);
-                    }
-                    else if (ModeIndex==2 && SampleImage is not null)
-                    {
-                        percentage = CalculateSimilarityByHist(FixedImage, bitmap2);
-                    }
 
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        while (ProbabilityList.Count >= 10)
-                        {
-                            ProbabilityList.RemoveAt(ProbabilityList.Count - 1);
-                        }
+                    ProbabilityList.Insert(0, new(dateTime, percentage));
+                });
 
-                        ProbabilityList.Insert(0, new() { DateTime =  dateTime, Percentage = percentage });
-                    });
+                if (percentage > WhiteRatio - Tolerance && percentage < WhiteRatio +  Tolerance)
+                {
+                    ConsecutiveMatchesCount++;
+                    if (ConsecutiveMatchesCount >= ConsecutiveMatchesThreshold)
+                    {
+                        Nukepayload2.Diagnostics.Interaction.SendTouch(
+                        posX: ScreenCaptureArea.Left + (ScreenCaptureArea.Width / 2),
+                        posY: ScreenCaptureArea.Top + (ScreenCaptureArea.Height / 2),
+                        durationMilliseconds: 20);
+                        ConsecutiveMatchesCount = 0;
+                    }
+                }
+                else
+                {
+                    ConsecutiveMatchesCount = 0;
                 }
             }
             catch (Exception ex)

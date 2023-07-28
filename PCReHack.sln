@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PCReHack", "PCReHack\PCReHa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CV_Hack", "CV_Hack\CV_Hack.csproj", "{989D0CA5-7D83-4A19-AA5C-028E07D2AB53}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CV_ViewTool", "CV_ViewTool\CV_ViewTool.csproj", "{3B243222-7501-474E-9BC3-8160A1E55EBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML_TestConsole", "ML_TestConsole\ML_TestConsole.csproj", "{6C1E54E2-FC85-4B2E-A151-444A65F59396}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{989D0CA5-7D83-4A19-AA5C-028E07D2AB53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{989D0CA5-7D83-4A19-AA5C-028E07D2AB53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{989D0CA5-7D83-4A19-AA5C-028E07D2AB53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B243222-7501-474E-9BC3-8160A1E55EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B243222-7501-474E-9BC3-8160A1E55EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B243222-7501-474E-9BC3-8160A1E55EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B243222-7501-474E-9BC3-8160A1E55EBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C1E54E2-FC85-4B2E-A151-444A65F59396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C1E54E2-FC85-4B2E-A151-444A65F59396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C1E54E2-FC85-4B2E-A151-444A65F59396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C1E54E2-FC85-4B2E-A151-444A65F59396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

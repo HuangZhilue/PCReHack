@@ -120,7 +120,7 @@ public class InRangeViewModel : ObservableObject, INavigationAware
         // Open document 
         string filename = dlg.FileName;
 
-        var bitmap = new Bitmap(filename);
+        Bitmap bitmap = new(filename);
         Bitmap1 = bitmap;
         OriginalImage = bitmap.BitmapToBitmapImage();
     }

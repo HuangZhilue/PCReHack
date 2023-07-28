@@ -109,7 +109,7 @@ public class MainViewModel : ObservableObject
             return;
         }
 
-        var r = MessageBox.Show($"是否删除 ({profileName})？", "提示", MessageBoxButton.YesNo);
+        MessageBoxResult r = MessageBox.Show($"是否删除 ({profileName})？", "提示", MessageBoxButton.YesNo);
         if (r != MessageBoxResult.Yes) return;
         string profileList = App.Current.Properties["ProfileList"]?.ToString() ?? "";
         List<CVProfile> profiles = JsonConvert.DeserializeObject<List<CVProfile>>(profileList) ?? new();
@@ -142,7 +142,7 @@ public class MainViewModel : ObservableObject
 
         IsStart = !IsStart;
 
-        foreach (var id in idList)
+        foreach (string id in idList)
         {
             WindowManagerService.NotifyToWindow(
                 id,

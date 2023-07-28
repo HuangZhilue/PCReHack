@@ -141,5 +141,7 @@ public partial class App : Application
     {
         // TODO: Please log and handle the exception as appropriate to your scenario
         // For more info see https://docs.microsoft.com/dotnet/api/system.windows.application.dispatcherunhandledexception?view=netcore-3.0
+        MessageBox.Show(e.Exception.Message, "错误");
+        e.Handled = true;
     }
 }

@@ -7,8 +7,9 @@
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.291.0328</AssemblyVersion>
-    <FileVersion>1.0.291.0328</FileVersion>
+    <AssemblyVersion>1.0.295.1012</AssemblyVersion>
+    <FileVersion>1.0.295.1012</FileVersion>
+    <UserSecretsId>bb4a061a-d58a-4fb6-84d4-f95628ffdc8e</UserSecretsId>
   </PropertyGroup>
   
   <ItemGroup>
@@ -21,6 +22,7 @@
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Nukepayload2.Diagnostics.InputInjection" Version="1.2.1-rc6" />
     <PackageReference Include="OpenCvSharp4.Extensions" Version="4.8.0.20230708" />
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.8.0.20230708" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />

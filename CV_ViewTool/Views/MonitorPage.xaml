@@ -38,10 +38,10 @@
                 Place your content here.
             -->
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="3*" />
                 <RowDefinition Height="5" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="3*" />
+                <RowDefinition Height="4*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
@@ -235,6 +235,12 @@
                             Margin="{StaticResource XSmallLeftMargin}"
                             VerticalAlignment="Center"
                             Text="{Binding Tolerance}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="连续匹配的阈值:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding ConsecutiveMatchesThreshold}" />
                     </WrapPanel>
                     <WrapPanel
                         x:Name="WrapPanel1"
@@ -271,6 +277,12 @@
                             Margin="{StaticResource XSmallLeftMargin}"
                             VerticalAlignment="Center"
                             Text="{Binding Tolerance}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="连续匹配的阈值:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding ConsecutiveMatchesThreshold}" />
                     </WrapPanel>
                     <WrapPanel
                         x:Name="WrapPanel2"
@@ -307,6 +319,12 @@
                             Margin="{StaticResource XSmallLeftMargin}"
                             VerticalAlignment="Center"
                             Text="{Binding Tolerance}" />
+                        <Label Margin="{StaticResource SmallLeftMargin}" Content="连续匹配的阈值:" />
+                        <TextBox
+                            MinWidth="100"
+                            Margin="{StaticResource XSmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{Binding ConsecutiveMatchesThreshold}" />
                     </WrapPanel>
                 </StackPanel>
             </StackPanel>
@@ -337,7 +355,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Width="Auto" Header="概率">
+                            <GridViewColumn Width="Auto" Header="计算值">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock MinWidth="150" Text="{Binding Percentage}" />

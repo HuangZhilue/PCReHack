@@ -8,8 +8,9 @@
     <Version>1.0.0.0</Version>
     <Configurations>Debug;Release</Configurations>
     <Copyright>Copyright © huang 2022</Copyright>
-    <FileVersion>1.0.173.0925</FileVersion>
-    <AssemblyVersion>1.0.173.0925</AssemblyVersion>
+    <FileVersion>1.0.205.1012</FileVersion>
+    <AssemblyVersion>1.0.205.1012</AssemblyVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;Core</DefineConstants>
