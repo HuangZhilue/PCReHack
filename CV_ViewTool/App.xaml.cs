@@ -99,6 +99,7 @@ public partial class App : Application
         services.AddSingleton<IPageService, PageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IAppState, AppState>();
+        services.AddSingleton<IMouseOperations, MouseOperations>();
 
         // Views and ViewModels
         services.AddTransient<IShellWindow, ShellWindow>();

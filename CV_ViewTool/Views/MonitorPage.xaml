@@ -168,6 +168,10 @@
                             Content="Show Image?"
                             IsChecked="{Binding EnableImage}"
                             ToolTip="显示图像时将占用部分系统资源来渲染显示图像。" />
+                        <CheckBox
+                            Margin="{StaticResource SmallLeftMargin}"
+                            Content="Use Touch?"
+                            IsChecked="{Binding UseTouch}" />
                         <Label Margin="{StaticResource SmallLeftMargin}" Content="绑定到:" />
                         <ComboBox
                             MinWidth="120"

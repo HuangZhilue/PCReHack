@@ -6,6 +6,7 @@ using CV_ViewTool.Contracts.ViewModels;
 using CV_ViewTool.Converters;
 using CV_ViewTool.Helpers;
 using CV_ViewTool.Models;
+using CV_ViewTool.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -16,6 +17,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using MouseEventFlags = CV_ViewTool.Services.MouseEventFlags;
 
 namespace CV_ViewTool.ViewModels;
 
@@ -24,6 +26,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     public readonly record struct PercentageRecord(DateTime DateTime, double Percentage);
 
     private bool _enableImage = true;
+    private bool _useTouch = true;
     private string _profileName = string.Empty;
     private bool _useInRange;
     private BitmapImage _originalImage;
@@ -53,6 +56,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     private ICommand _initCameraListCommand;
 
     public bool EnableImage { get => _enableImage; set => SetProperty(ref _enableImage, value); }
+    public bool UseTouch { get => _useTouch; set => SetProperty(ref _useTouch, value); }
     public string ProfileName { get => _profileName; set => SetProperty(ref _profileName, value); }
     public bool UseInRange { get => _useInRange; set => SetProperty(ref _useInRange, value); }
     public BitmapImage OriginalImage { get => _originalImage; set => SetProperty(ref _originalImage, value); }
@@ -95,10 +99,12 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     private Mat FixedImage { get; set; } = new();
     private ScreenCaptureArea ScreenCaptureArea { get; set; } = new();
     private int ConsecutiveMatchesCount { get; set; } = 0;
+    private IMouseOperations MouseOperations { get; } = new MouseOperations();
 
     public MonitorViewModel(IServiceProvider service)
     {
         AppState = service.GetRequiredService<IAppState>();
+        MouseOperations = service.GetRequiredService<IMouseOperations>();
 
         //Task.Run(async () =>
         //{
@@ -223,7 +229,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
 
     private void ImageProcessing(Bitmap bitmap)
     {
-        if (!EnableImage || bitmap is null) return;
+        if (bitmap is null) return;
 
         Queue.Enqueue((() =>
         {
@@ -249,8 +255,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
                 }
 
                 if (bitmap2 is null) return;
-
-                ProcessedImage = bitmap2.BitmapToBitmapImage();
+                if (EnableImage) ProcessedImage = bitmap2.BitmapToBitmapImage();
 
                 DateTime dateTime = DateTime.Now;
                 double percentage = 0;
@@ -278,15 +283,26 @@ public class MonitorViewModel : ObservableObject, INavigationAware
                     ProbabilityList.Insert(0, new(dateTime, percentage));
                 });
 
+                if (ConsecutiveMatchesThreshold <= 0) return;
                 if (percentage > WhiteRatio - Tolerance && percentage < WhiteRatio +  Tolerance)
                 {
                     ConsecutiveMatchesCount++;
                     if (ConsecutiveMatchesCount >= ConsecutiveMatchesThreshold)
                     {
-                        Nukepayload2.Diagnostics.Interaction.SendTouch(
-                        posX: ScreenCaptureArea.Left + (ScreenCaptureArea.Width / 2),
-                        posY: ScreenCaptureArea.Top + (ScreenCaptureArea.Height / 2),
-                        durationMilliseconds: 20);
+                        if (UseTouch)
+                        {
+                            Nukepayload2.Diagnostics.Interaction.SendTouch(
+                            posX: ScreenCaptureArea.Left + (ScreenCaptureArea.Width / 2),
+                            posY: ScreenCaptureArea.Top + (ScreenCaptureArea.Height / 2),
+                            durationMilliseconds: 20);
+                        }
+                        else
+                        {
+                            MouseOperations.SetCursorPosition(x: ScreenCaptureArea.Left + (ScreenCaptureArea.Width / 2), y: ScreenCaptureArea.Top + (ScreenCaptureArea.Height / 2));
+                            MouseOperations.MouseEvent(MouseEventFlags.LeftDown);
+                            MouseOperations.MouseEvent(MouseEventFlags.LeftUp);
+                        }
+
                         ConsecutiveMatchesCount = 0;
                     }
                 }

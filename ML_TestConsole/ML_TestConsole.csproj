@@ -4,8 +4,8 @@
 		<TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<AssemblyVersion>1.0.90.0954</AssemblyVersion>
-		<FileVersion>1.0.90.0954</FileVersion>
+		<AssemblyVersion>1.0.118.1011</AssemblyVersion>
+		<FileVersion>1.0.118.1011</FileVersion>
 		<SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
 		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
@@ -14,10 +14,25 @@
 		<PackageReference Include="Microsoft.ML.ImageAnalytics" Version="3.0.0-preview.23266.6" />
 		<PackageReference Include="Microsoft.ML.TorchSharp" Version="0.21.0-preview.23266.6" />
 		<PackageReference Include="Microsoft.ML.Vision" Version="3.0.0-preview.23266.6" />
-		<PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.3.1" />
-		<PackageReference Include="TorchSharp-cpu" Version="0.99.5" />
+		<PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.11.4" />
+		<PackageReference Include="TorchSharp-cpu" Version="0.100.3" />
 		<PackageReference Include="OpenCvSharp4.Extensions" Version="4.8.0.20230708" />
 		<PackageReference Include="OpenCvSharp4.Windows" Version="4.8.0.20230708" />
 		<PackageReference Include="Nukepayload2.Diagnostics.InputInjection" Version="1.2.1-rc6" />
+		<PackageReference Include="YoloV8" Version="1.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="assets\models\yolov8s-pose.onnx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\models\yolov8s-seg.onnx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\models\yolov8s.onnx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="assets\input\" />
 	</ItemGroup>
 </Project>
