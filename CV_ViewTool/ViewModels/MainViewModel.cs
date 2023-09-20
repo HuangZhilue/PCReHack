@@ -5,8 +5,11 @@ using CV_ViewTool.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
+using Point = System.Drawing.Point;
 
 namespace CV_ViewTool.ViewModels;
 
@@ -122,11 +125,12 @@ public class MainViewModel : ObservableObject
 
     private void OpenMonitorWindow(string profileName)
     {
-        string name = "MonitorWindow_"+profileName??"";
+        string name = "MonitorWindow_" + profileName ?? "";
+        name += DateTime.Now.Ticks;
         WindowManagerService.OpenInNewWindow(
             name,
             typeof(MonitorViewModel).FullName,
-            parameter: new Dictionary<string, object>() { { "ProfileName", profileName } },//profileName, 
+            parameter: new Dictionary<string, object>() { { "ProfileName", profileName }, { "Title", name } },//profileName, 
             title: name,
             shellName: "TransparencyMetroWindow");
     }
@@ -149,5 +153,67 @@ public class MainViewModel : ObservableObject
                 typeof(ScreenCaptureViewModel).FullName,
                 parameter: new Dictionary<string, object>() { { "IsStart", IsStart } });
         }
+
+        //Task.Run(async () =>
+        //{
+        //    DateTime StartTime = DateTime.Now;
+        //    int ScreenshotCount = 0;
+
+        //    string monitorName = typeof(MonitorViewModel).FullName;
+        //    Dictionary<string, object> dic = new() { { "ScreenShut", null }, { "FPS", 0 } };
+        //    double fps = 0;
+
+        //    Rectangle bounds = new((int)SystemParameters.VirtualScreenLeft, (int)SystemParameters.VirtualScreenTop, (int)SystemParameters.VirtualScreenWidth, (int)SystemParameters.VirtualScreenHeight);
+        //    //Rectangle bounds = new(0, 0, 100, 100);
+
+        //    Bitmap bitmap = new(bounds.Width, bounds.Height);
+        //    Point startPoint = new(0, 0);
+
+        //    Graphics g = Graphics.FromImage(bitmap);
+        //    while (IsStart)
+        //    {
+        //        g = Graphics.FromImage(bitmap);
+        //        g.CopyFromScreen(startPoint, Point.Empty, bounds.Size);
+        //        //App.Current.Dispatcher.Invoke(() =>
+        //        //{
+        //        dic["ScreenShut"] = bitmap;
+        //        dic["FPS"] = fps;
+        //        try
+        //        {
+        //            //MonitorNavigationAwareList?.ForEach((navigationAware) =>
+        //            //{
+        //            //    navigationAware?.OnNavigatedTo(dic);
+        //            //});
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Debug.WriteLine(ex);
+        //            // ignore
+        //        }
+        //        //});
+        //        // 增加截图计数
+        //        ScreenshotCount++;
+
+        //        // 计算时间间隔
+        //        TimeSpan elapsedTime = DateTime.Now - StartTime;
+
+        //        if (elapsedTime.TotalMilliseconds > 1000)
+        //        {
+        //            // 计算截图频率
+        //            fps = (ScreenshotCount / elapsedTime.TotalMilliseconds) * 1000;
+
+        //            // 打印截图频率
+        //            Debug.WriteLine($"截图频率: {fps} FPS");
+        //            StartTime = DateTime.Now;
+        //            ScreenshotCount = 0;
+        //        }
+
+        //        // 等待一定时间间隔
+        //        await Task.Delay(TimeSpan.FromMilliseconds(0));
+        //    }
+
+        //    bitmap.Dispose();
+        //    g?.Dispose();
+        //});
     }
 }

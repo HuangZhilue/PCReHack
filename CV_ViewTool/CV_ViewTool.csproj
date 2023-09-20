@@ -7,8 +7,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.296.0850</AssemblyVersion>
-    <FileVersion>1.0.296.0850</FileVersion>
+    <AssemblyVersion>1.0.307.0214</AssemblyVersion>
+    <FileVersion>1.0.307.0214</FileVersion>
     <UserSecretsId>bb4a061a-d58a-4fb6-84d4-f95628ffdc8e</UserSecretsId>
   </PropertyGroup>
   

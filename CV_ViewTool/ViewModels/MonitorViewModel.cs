@@ -28,6 +28,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     private bool _enableImage = true;
     private bool _useTouch = true;
     private string _profileName = string.Empty;
+    private string _title = string.Empty;
     private bool _useInRange;
     private BitmapImage _originalImage;
     private BitmapImage _processedImage;
@@ -39,15 +40,15 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     /// <summary>
     /// 预期计算结果（白色占比/色彩直方图计算结果/模板匹配预期）
     /// </summary>
-    private double _whiteRatio = 25;
+    private double _whiteRatio = 0.13;
     /// <summary>
     /// 容差
     /// </summary>
-    private double _tolerance = 6;
+    private double _tolerance = 0.01;
     /// <summary>
     /// 连续匹配的阈值
     /// </summary>
-    private int _consecutiveMatchesThreshold = 0;
+    private int _consecutiveMatchesThreshold = 1;
     private ColorState _colorState = new();
     private ColorState _colorState2 = new();
     private ICommand _showImageCommand;
@@ -58,6 +59,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     public bool EnableImage { get => _enableImage; set => SetProperty(ref _enableImage, value); }
     public bool UseTouch { get => _useTouch; set => SetProperty(ref _useTouch, value); }
     public string ProfileName { get => _profileName; set => SetProperty(ref _profileName, value); }
+    public string Title { get => _title; set => SetProperty(ref _title, value); }
     public bool UseInRange { get => _useInRange; set => SetProperty(ref _useInRange, value); }
     public BitmapImage OriginalImage { get => _originalImage; set => SetProperty(ref _originalImage, value); }
     public BitmapImage ProcessedImage { get => _processedImage; set => SetProperty(ref _processedImage, value); }
@@ -145,6 +147,11 @@ public class MonitorViewModel : ObservableObject, INavigationAware
             UseInRange = profile.UseInRange;
         }
 
+        if (dic.ContainsKey("Title") && dic["Title"] is string title)
+        {
+            Title = title;
+        }
+
         if (dic.ContainsKey("ScreenShut") && dic["ScreenShut"] is Bitmap bitmap)
         {
             OriginalImage = bitmap.BitmapToBitmapImage();
@@ -201,7 +208,7 @@ public class MonitorViewModel : ObservableObject, INavigationAware
     {
         if (cameraIndex < 0 || cameraIndex >= CameraNameList.Count) return;
         string name = CameraNameList[cameraIndex];
-        string monitorPageId = "MonitorWindow_" + ProfileName;
+        string monitorPageId = Title;
         if (AppState.CameraMonitorState.ContainsKey(name))
         {
             foreach (string key in AppState.CameraMonitorState.Keys)
@@ -388,11 +395,11 @@ public class MonitorViewModel : ObservableObject, INavigationAware
 
         // 计算图像1的直方图
         Mat hist1 = new();
-        Cv2.CalcHist(new[] { fixedImage }, new int[] { 0 }, null, hist1, 1, new[] { 256 }, new Rangef[] { new Rangef(0, 256) });
+        Cv2.CalcHist(new[] { fixedImage }, new int[] { 0 }, null, hist1, 1, new[] { 256 }, new Rangef[] { new(0, 256) });
 
         // 计算图像2的直方图
         Mat hist2 = new();
-        Cv2.CalcHist(new[] { liveImageMat }, new int[] { 0 }, null, hist2, 1, new[] { 256 }, new Rangef[] { new Rangef(0, 256) });
+        Cv2.CalcHist(new[] { liveImageMat }, new int[] { 0 }, null, hist2, 1, new[] { 256 }, new Rangef[] { new(0, 256) });
 
         // 比较两张图像的直方图   Hellinger / Bhattacharyya
         double similarity = Cv2.CompareHist(hist1, hist2, HistCompMethods.Bhattacharyya);

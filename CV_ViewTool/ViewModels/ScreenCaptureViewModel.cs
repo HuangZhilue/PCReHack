@@ -119,6 +119,7 @@ public class ScreenCaptureViewModel : ObservableObject, INavigationAware
 
     private async void ScreenShut()
     {
+        // TODO 需要修改为 一次截屏，按区域裁剪的方式来获取区域截图
         StartTime = DateTime.Now;
         ScreenshotCount = 0;
 
